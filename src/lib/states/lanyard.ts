@@ -8,7 +8,7 @@ const createLanyardStore = () => {
     const { subscribe, set, update } = writable<LanyardResponse | null>(null);
 
     if (browser) {
-        const socket = new WebSocket('wss://api.lanyard.rest/socket');
+        const socket = new WebSocket('wss://lanyard.vmohammad.dev/socket');
 
         socket.addEventListener('open', () => {
             console.log('Connected to Lanyard WebSocket');
