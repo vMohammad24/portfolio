@@ -218,6 +218,17 @@
 			<section
 				class="transform rounded-xl bg-base/80 p-8 shadow-2xl transition-all hover:scale-[1.02]"
 			>
+				<h2 class="mb-6 text-2xl font-bold text-text">Weekly Coding Stats</h2>
+				<img
+					src="https://github-readme-stats.vercel.app/api/wakatime?username=vMohammad&theme=catppuccin_mocha&hide_border=true&layout=compact&langs_count=6"
+					alt="WakaTime Stats"
+					class="mx-auto w-full max-w-2xl"
+				/>
+			</section>
+
+			<section
+				class="transform rounded-xl bg-base/80 p-8 shadow-2xl transition-all hover:scale-[1.02]"
+			>
 				<h2 class="mb-6 text-2xl font-bold text-text">Skills & Technologies</h2>
 				<div class="flex flex-wrap gap-4">
 					{#each skills as skill}
