@@ -53,7 +53,7 @@ interface WakaTimeResponse {
 
 export async function fetchWakaTimeStats(): Promise<WakaTimeStats> {
     const response = await fetch(
-        '/wakatimeStats',
+        'https://wakatime.vmohammad.dev/',
     );
     const data: WakaTimeResponse = await response.json();
     return data.data;
