@@ -129,7 +129,9 @@
 	$: customStatus = $lanyardStore?.activities?.find((activity) => activity.type === 4);
 
 	$: regularActivities = $lanyardStore?.activities?.filter((activity) => activity.type !== 4) || [];
-
+	$: avatarDecoration = $lanyardStore?.discord_user.avatar_decoration_data
+		? `https://cdn.discordapp.com/avatar-decoration-presets/${$lanyardStore.discord_user.avatar_decoration_data.asset}.png?size=1024&passthrough=true`
+		: null;
 	function calculateStrokeDashArray(percent: number, radius: number): string {
 		const circumference = 2 * Math.PI * radius;
 		const strokeDasharray = `${(percent * circumference) / 100} ${circumference}`;
@@ -140,7 +142,6 @@
 <main class="min-h-screen bg-gradient-to-br from-base to-crust p-4 text-text md:p-8">
 	{#if $lanyardStore}
 		<div class="mx-auto grid max-w-7xl grid-cols-1 gap-4 md:grid-cols-12">
-			<!-- hero -->
 			<section
 				class="relative transform overflow-hidden rounded-xl bg-base/80 p-8 shadow-2xl transition-all hover:scale-[1.02] md:col-span-12"
 			>
@@ -148,12 +149,32 @@
 					class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-crust/20 to-transparent"
 				></div>
 				<div class="relative z-10 flex flex-col items-center gap-8 md:flex-row">
-					<img
-						src="https://cdn.discordapp.com/avatars/{$lanyardStore.discord_user.id}/{$lanyardStore
-							.discord_user.avatar}.webp?size=1024"
-						alt="Avatar"
-						class="h-40 w-40 transform rounded-full border-4 border-crust shadow-lg transition-transform hover:rotate-6"
-					/>
+					<div class="group relative h-40 w-40 overflow-visible">
+						<div class="absolute inset-0 z-10 overflow-hidden rounded-full">
+							<div
+								class="absolute inset-0 bg-gradient-to-tr from-crust to-surface0 opacity-0 group-hover:opacity-20"
+							></div>
+							<img
+								src="https://cdn.discordapp.com/avatars/{$lanyardStore.discord_user
+									.id}/{$lanyardStore.discord_user.avatar}.webp?size=1024"
+								alt="Avatar"
+								class="h-full w-full transform object-cover transition-all duration-300 group-hover:scale-110"
+								loading="eager"
+							/>
+						</div>
+
+						<div
+							class="absolute inset-0 z-20 rounded-full border-4 border-crust shadow-lg transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105"
+						></div>
+
+						{#if avatarDecoration}
+							<img
+								src={avatarDecoration}
+								alt="Avatar Decoration"
+								class="absolute inset-0 z-30 h-40 w-40 transform transition-all duration-300 group-hover:rotate-12 group-hover:scale-110"
+							/>
+						{/if}
+					</div>
 					<div class="text-center md:text-left">
 						<h1
 							class="bg-gradient-to-r from-text to-subtext0 bg-clip-text text-5xl font-bold text-transparent"
@@ -253,7 +274,7 @@
 								>
 									<div class="absolute inset-0 opacity-50">
 										<div
-											class="animate-shimmer h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"
+											class="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"
 											style="background-size: 200% 100%"
 										></div>
 									</div>

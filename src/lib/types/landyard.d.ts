@@ -22,6 +22,12 @@ interface DiscordUser {
     id: string;
     discriminator: string;
     avatar: string;
+    avatar_decoration_data?: AvatarDecorationData;
+}
+
+interface AvatarDecorationData {
+    sku_id: string;
+    asset: string;
 }
 
 interface Party {
