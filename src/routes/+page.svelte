@@ -149,31 +149,21 @@
 					class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-crust/20 to-transparent"
 				></div>
 				<div class="relative z-10 flex flex-col items-center gap-8 md:flex-row">
-					<div class="group relative h-40 w-40 overflow-visible">
-						<div class="absolute inset-0 z-10 overflow-hidden rounded-full">
-							<div
-								class="absolute inset-0 bg-gradient-to-tr from-crust to-surface0 opacity-0 group-hover:opacity-20"
-							></div>
-							<img
-								src="https://cdn.discordapp.com/avatars/{$lanyardStore.discord_user
-									.id}/{$lanyardStore.discord_user.avatar}.webp?size=1024"
-								alt="Avatar"
-								class="h-full w-full transform object-cover transition-all duration-300 group-hover:scale-110"
-								loading="eager"
-							/>
-						</div>
-
-						<div
-							class="absolute inset-0 z-20 rounded-full border-4 border-crust shadow-lg transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105"
-						></div>
-
+					<div class="relative grid h-40 w-40 shrink-0 place-items-center">
 						{#if avatarDecoration}
 							<img
+								class="pointer-events-none absolute z-20 h-36 w-36 rounded-full"
 								src={avatarDecoration}
 								alt="Avatar Decoration"
-								class="absolute inset-0 z-30 h-40 w-40 transform transition-all duration-300 group-hover:rotate-12 group-hover:scale-110"
 							/>
 						{/if}
+						<img
+							class="z-5 h-32 w-32 rounded-full border-2 border-zinc-900 object-cover"
+							src="https://cdn.discordapp.com/avatars/{$lanyardStore.discord_user.id}/{$lanyardStore
+								.discord_user.avatar}.webp?size=1024"
+							alt="Avatar"
+							loading="eager"
+						/>
 					</div>
 					<div class="text-center md:text-left">
 						<h1
