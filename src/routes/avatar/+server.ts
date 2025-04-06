@@ -3,7 +3,7 @@ import type { LanyardResponse } from '$lib/types/landyard';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-    const response = await fetch('https://lanyard.vmohammad.dev/v1/users/921098159348924457', {
+    const response = await fetch('https://lanyard.vmohammad.dev/v1/users/840854894881538079', {
         headers: {
             'Accept': 'application/json'
         }

@@ -2,7 +2,7 @@ import { browser } from '$app/environment';
 import type { LanyardResponse } from '$lib/types/landyard';
 import { writable } from 'svelte/store';
 
-const discordId = '921098159348924457';
+const discordId = '840854894881538079';
 
 const createLanyardStore = () => {
     const { subscribe, set, update } = writable<LanyardResponse | null>(null);
