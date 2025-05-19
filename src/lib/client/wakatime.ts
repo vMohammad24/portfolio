@@ -1,80 +1,103 @@
-interface WakaTimeActivity {
-    decimal: string;
-    digital: string;
-    hours: number;
-    minutes: number;
-    name: string;
-    percent: number;
-    text: string;
-    total_seconds: number;
-}
-
-export interface WakaTimeStats {
-    categories: WakaTimeActivity[];
-    daily_average: number;
-    daily_average_including_other_language: number;
-    days_including_holidays: number;
-    days_minus_holidays: number;
-    editors: WakaTimeActivity[];
-    holidays: number;
-    human_readable_daily_average: string;
-    human_readable_daily_average_including_other_language: string;
-    human_readable_range: string;
-    human_readable_total: string;
-    human_readable_total_including_other_language: string;
-    id: string;
-    is_already_updating: boolean;
-    is_cached: boolean;
-    is_category_usage_visible: boolean;
-    is_coding_activity_visible: boolean;
-    is_editor_usage_visible: boolean;
-    is_including_today: boolean;
-    is_language_usage_visible: boolean;
-    is_os_usage_visible: boolean;
-    is_stuck: boolean;
-    is_up_to_date: boolean;
-    is_up_to_date_pending_future: boolean;
-    languages: WakaTimeActivity[];
-    operating_systems: WakaTimeActivity[];
-    percent_calculated: number;
-    range: string;
-    status: string;
-    timeout: number;
-    total_seconds: number;
-    total_seconds_including_other_language: number;
-    user_id: string;
-    username: string;
-    writes_only: boolean;
-}
-
-interface WakaTimeResponse {
-    data: WakaTimeStats;
-}
+export type WakaTimeStats = {
+    data: {
+        username: string;
+        user_id: string;
+        start: string;
+        end: string;
+        status: string;
+        total_seconds: number;
+        daily_average: number;
+        days_including_holidays: number;
+        range: string;
+        human_readable_range: string;
+        human_readable_total: string;
+        human_readable_daily_average: string;
+        is_coding_activity_visible: boolean;
+        is_other_usage_visible: boolean;
+        languages: Array<{
+            digital: string;
+            hours: number;
+            minutes: number;
+            name: string;
+            percent: number;
+            seconds: number;
+            text: string;
+            total_seconds: number;
+            color?: string;
+        }>;
+        projects: Array<{
+            digital: string;
+            hours: number;
+            minutes: number;
+            name: string;
+            percent: number;
+            seconds: number;
+            text: string;
+            total_seconds: number;
+        }>;
+        operating_systems: Array<unknown>;
+        categories: Array<{
+            digital: string;
+            hours: number;
+            minutes: number;
+            name: string;
+            percent: number;
+            seconds: number;
+            text: string;
+            total_seconds: number;
+        }>;
+        machines: Array<unknown>;
+        editors: Array<unknown>;
+    };
+};
 
 export async function fetchWakaTimeStats(): Promise<WakaTimeStats> {
-    const response = await fetch(
-        'https://wakatime.vmohammad.dev/',
-    );
-    const data: WakaTimeResponse = await response.json();
-    return data.data;
-}
+    const response = await fetch("https://wakatime.vmohammad.dev");
 
-export function filterSignificantLanguages(languages: WakaTimeActivity[], threshold = 1): WakaTimeActivity[] {
-    return languages.filter(lang => lang.percent >= threshold);
-}
-
-export function calculateTotalHours(stats: WakaTimeStats): number {
-    return stats.total_seconds / 3600;
-}
-
-export function formatTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    if (hours === 0) {
-        return `${minutes}m`;
+    if (!response.ok) {
+        throw new Error(`Error fetching WakaTime stats: ${response.statusText}`);
     }
-    return `${hours}h ${minutes}m`;
+
+    return await response.json();
+}
+
+export function extractProjectStats(wakaTimeData: WakaTimeStats, projectNames: string[]): Record<string, {
+    totalSeconds: number;
+    text: string;
+    percent: number;
+} | null> {
+    if (!wakaTimeData?.data?.projects) {
+        return {};
+    }
+
+    const result: Record<string, {
+        totalSeconds: number;
+        text: string;
+        percent: number;
+    } | null> = {};
+
+    const lowercaseProjectNames = projectNames.map(name => name.toLowerCase());
+
+    const projectMap = new Map(
+        wakaTimeData.data.projects.map(project => [project.name.toLowerCase(), project])
+    );
+
+    lowercaseProjectNames.forEach((lowercaseName, index) => {
+        const originalName = projectNames[index];
+        const project = projectMap.get(lowercaseName);
+
+        if (project) {
+            result[originalName] = {
+                totalSeconds: project.total_seconds,
+                text: project.text,
+                percent: project.percent
+            };
+        } else {
+            result[originalName] = null;
+        }
+    });
+
+    return result;
 }
 
 export interface ChartSegment {
@@ -93,6 +116,7 @@ export interface ChartData {
 
 export const languageColors: Record<string, string> = {
     TypeScript: '#3178C6',
+    TSX: '#3178C6',
     JavaScript: '#F7DF1E',
     Python: '#3776AB',
     Svelte: '#FF3E00',
@@ -104,19 +128,55 @@ export const languageColors: Record<string, string> = {
     YAML: '#CB171E'
 };
 
-export function prepareChartData(languages: WakaTimeActivity[]): ChartData {
-    const significant = filterSignificantLanguages(languages, 1);
-    const total_seconds = languages.reduce((acc, lang) => acc + lang.total_seconds, 0);
+export function prepareChartData(languages: WakaTimeStats['data']['languages']) {
+    const sortedLanguages = [...languages].sort((a, b) => b.percent - a.percent);
 
+    const totalSeconds = sortedLanguages.reduce((total, lang) => total + lang.total_seconds, 0);
+    let totalTime = '';
+
+    if (totalSeconds > 3600) {
+        totalTime = `${Math.floor(totalSeconds / 3600)}h ${Math.floor((totalSeconds % 3600) / 60)}m`;
+    } else {
+        totalTime = `${Math.floor(totalSeconds / 60)}m`;
+    }
+    const limit = 10;
+    const topLanguages = sortedLanguages.slice(0, limit);
+
+    if (sortedLanguages.length > limit) {
+        const otherSeconds = sortedLanguages
+            .slice(limit)
+            .reduce((total, lang) => total + lang.total_seconds, 0);
+
+        const otherPercent = sortedLanguages
+            .slice(limit)
+            .reduce((total, lang) => total + lang.percent, 0);
+
+        let otherText = '';
+        if (otherSeconds > 3600) {
+            otherText = `${Math.floor(otherSeconds / 3600)}h ${Math.floor((otherSeconds % 3600) / 60)}m`;
+        } else {
+            otherText = `${Math.floor(otherSeconds / 60)}m`;
+        }
+
+        topLanguages.push({
+            name: 'Other',
+            total_seconds: otherSeconds,
+            percent: otherPercent,
+            text: otherText,
+            color: '#CCCCCC',
+            digital: '',
+            hours: Math.floor(otherSeconds / 3600),
+            minutes: Math.floor((otherSeconds % 3600) / 60),
+            seconds: otherSeconds % 60
+        });
+    }
+    for (const lang of topLanguages) {
+        if (!lang.color) {
+            lang.color = languageColors[lang.name] || '#CCCCCC';
+        }
+    }
     return {
-        segments: significant.map(lang => ({
-            name: lang.name,
-            percent: lang.percent,
-            color: languageColors[lang.name] || '#666666',
-            timeSpent: formatTime(lang.total_seconds),
-            total_seconds: lang.total_seconds
-        })),
-        totalTime: formatTime(total_seconds),
-        total_seconds
+        segments: topLanguages,
+        totalTime
     };
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	let { children } = $props();
+	const { children } = $props();
 </script>
 
 <div class="bg-base text-text">{@render children()}</div>
