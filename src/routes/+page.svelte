@@ -369,7 +369,7 @@
 	const socials = [
 		{
 			name: 'Discord',
-			link: `https://discord.com/users/${$lanyardStore?.discord_user.id || '..'}`,
+			link: `https://discord.com/users/${$lanyardStore?.discord_user.id || '840854894881538079'}`,
 			useDiscordId: true,
 			icon: 'https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/discord.svg',
 			gradientFrom: '#5865F2',
