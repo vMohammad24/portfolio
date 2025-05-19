@@ -36,14 +36,13 @@
 	let wakaTimeError: string | null = null;
 	let projects: ProjectData[] = [
 		{
-			name: 'VOT',
+			name: 'NaviThingy',
 			description:
-				'The all-in-one Discord bot that brings your server to life with powerful moderation, music, and fun features.',
-			link: 'https://vot.wtf',
-			wakatimeName: 'vot',
-			logo: 'https://vot.wtf/vot_transparent.png',
+				'A Navidrome/Subsonic client for Desktop providing the best experience possible.',
+			link: 'https://github.com/vmohammad24/NaviThingy/',
+			wakatimeName: 'NaviThingy',
 			wakatimeStats: null,
-			techs: ['Bun', 'Typescript', 'PostgreSQL', 'Redis']
+			techs: ['Tauri', 'Svelte', 'Bun', 'Rust']
 		},
 		{
 			name: 'Tidal Subsonic',
