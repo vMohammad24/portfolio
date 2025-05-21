@@ -1,5 +1,12 @@
-FROM oven/bun AS base
+FROM oven/bun:debian AS base
 WORKDIR /usr/src/app
+
+RUN apt-get update && \
+    apt-get install -y fonts-noto fontconfig && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    rm -rf /tmp/* /var/tmp/* && \
+    fc-cache -fv
 
 FROM base AS install
 RUN mkdir -p /temp/dev
