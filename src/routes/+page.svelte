@@ -312,14 +312,6 @@
   }
 </script>
 
-<svelte:head>
-  <title>Mohammad's Portfolio</title>
-  <meta
-    name="description"
-    content="Full-stack developer and student passionate about TypeScript, Svelte, and more."
-  />
-</svelte:head>
-
 <main
   class="relative min-h-screen overflow-hidden bg-gradient-to-br from-base to-crust p-4 text-text md:p-8"
 >

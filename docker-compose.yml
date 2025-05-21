@@ -1,0 +1,10 @@
+services:
+  portfolio:
+    image: portfolio:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "1008:3000"
+    environment:
+      - NODE_ENV=production
