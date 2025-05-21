@@ -1,6 +1,5 @@
 services:
   portfolio:
-    image: portfolio:latest
     build:
       context: .
       dockerfile: Dockerfile
