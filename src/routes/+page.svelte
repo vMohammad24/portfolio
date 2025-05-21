@@ -310,7 +310,19 @@
       },
     };
   }
+  const pain = `https://vmohammad.dev/avatar?${encodeURIComponent(
+    Array.from(crypto.getRandomValues(new Uint8Array(20)))
+      .map((byte) => String.fromCharCode(33 + (byte % 94)))
+      .join("")
+      .replace(/ /g, "%20"),
+  )}`;
 </script>
+
+<svelte:head>
+  <title>Mohammad's Portfolio</title>
+  <meta property="og:image" content={pain} />
+  <meta property="twitter:image:src" content={pain} />
+</svelte:head>
 
 <main
   class="relative min-h-screen overflow-hidden bg-gradient-to-br from-base to-crust p-4 text-text md:p-8"
