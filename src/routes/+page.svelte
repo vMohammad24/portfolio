@@ -47,6 +47,7 @@
       link: "https://github.com/vmohammad24/NaviThingy/",
       wakatimeName: "NaviThingy",
       wakatimeStats: null,
+      logo: "https://raw.githubusercontent.com/vMohammad24/NaviThingy/refs/heads/main/static/logo.svg",
       techs: ["Tauri", "Svelte", "Bun", "Rust"],
     },
     {
