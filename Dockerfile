@@ -2,7 +2,7 @@ FROM oven/bun:debian AS base
 WORKDIR /usr/src/app
 
 RUN apt-get update && \
-    apt-get install -y fonts-noto fontconfig && \
+    apt-get install -y fonts-noto fonts-segoe-ui fontconfig && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* && \

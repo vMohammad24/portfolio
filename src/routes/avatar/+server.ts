@@ -1,6 +1,7 @@
-import { type WakaTimeStats, fetchWakaTimeStats } from '$lib/client/wakatime';
+import { fetchWakaTimeStats } from '$lib/client/wakatime';
 import { birthday, languages, skills, themeColors } from '$lib/data/constants';
 import { fetchLanyard } from '$lib/states/lanyard';
+import type { WakaTimeStats } from '$lib/types';
 import { Resvg } from '@resvg/resvg-js';
 import type { RequestHandler } from './$types';
 
@@ -53,7 +54,7 @@ export const GET: RequestHandler = async ({ request }) => {
         const age = ((nowDate.getTime() - birthday.getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(2);
 
         let topProjects: WakaTimeStats['data']['projects'] = [];
-        let weeklyTotal = "";
+        let total = "";
 
         if (wakaTimeData?.data) {
             topProjects = wakaTimeData.data.projects
@@ -62,7 +63,7 @@ export const GET: RequestHandler = async ({ request }) => {
                     .slice(0, 3)
                 : [];
 
-            weeklyTotal = wakaTimeData.data.human_readable_total || "";
+            total = wakaTimeData.data.human_readable_total || "";
         }
 
         const projectData = topProjects.map((project, index) => {
@@ -183,9 +184,9 @@ export const GET: RequestHandler = async ({ request }) => {
                     Coding Stats
                 </text>
                 
-                ${weeklyTotal ? `
+                ${total ? `
                 <text y="30" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" fill="${themeColors.text}">
-                    ${weeklyTotal} this week
+                    ${total} total coding time 
                 </text>` : ''}
                 
                 ${projectData.length > 0 ? `
