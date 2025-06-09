@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Contribution, GitHubContributions } from "$lib/types";
-
   import { fade } from "svelte/transition";
+
   interface Props {
     githubContributions: GitHubContributions | null;
     githubError: string | null;
@@ -12,17 +12,17 @@
   function getContributionColor(level: number): string {
     switch (level) {
       case 0:
-        return "#161b22";
+        return "rgb(22, 27, 34)";
       case 1:
-        return "#0e4429";
+        return "rgb(49, 116, 143)";
       case 2:
-        return "#006d32";
+        return "rgb(116, 199, 236)";
       case 3:
-        return "#26a641";
+        return "rgb(166, 227, 161)";
       case 4:
-        return "#39d353";
+        return "rgb(135, 216, 142)";
       default:
-        return "#161b22";
+        return "rgb(22, 27, 34)";
     }
   }
 
@@ -72,6 +72,55 @@
 
     return streak;
   }
+  function getMaxContributionsInDay(): number {
+    if (!githubContributions) return 0;
+    let max = 0;
+    Object.values(githubContributions.contributions).forEach((year) => {
+      Object.values(year).forEach((month) => {
+        Object.values(month).forEach((day) => {
+          if (day && day.count > max) max = day.count;
+        });
+      });
+    });
+    return max;
+  }
+
+  function getLongestStreak(): number {
+    if (!githubContributions) return 0;
+    let longestStreak = 0;
+    let currentStreak = 0;
+    const allDates: { date: Date; count: number }[] = [];
+    Object.entries(githubContributions.contributions).forEach(
+      ([year, yearData]) => {
+        Object.entries(yearData).forEach(([month, monthData]) => {
+          Object.entries(monthData).forEach(([day, contribution]) => {
+            allDates.push({
+              date: new Date(
+                parseInt(year),
+                parseInt(month) - 1,
+                parseInt(day),
+              ),
+              count: contribution?.count || 0,
+            });
+          });
+        });
+      },
+    );
+
+    allDates.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+    for (const { count } of allDates) {
+      if (count > 0) {
+        currentStreak++;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+    }
+
+    return longestStreak;
+  }
+
   function getContributionsForYear(year: number): Contribution[] {
     if (!githubContributions) return [];
 
@@ -114,17 +163,19 @@
       class="absolute bottom-0 left-0 h-1 w-0 bg-green transition-all duration-500 group-hover:w-full"
     ></span>
   </h2>
+
   {#if githubError}
-    <p class="text-center text-red">{githubError}</p>
-  {/if}
-  {#if githubContributions}
+    <div class="text-center p-8">
+      <p class="text-red">{githubError}</p>
+    </div>
+  {:else if githubContributions}
     <div class="space-y-6">
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
           <div class="text-2xl font-bold text-green">
-            {getTotalContributions()}
+            {getTotalContributions().toLocaleString()}
           </div>
-          <div class="text-text-muted text-sm">Total Contributions</div>
+          <div class="text-text-muted text-sm">Total</div>
         </div>
         <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
           <div class="text-2xl font-bold text-green">
@@ -134,11 +185,18 @@
         </div>
         <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
           <div class="text-2xl font-bold text-green">
-            {Object.keys(githubContributions.contributions).length}
+            {getLongestStreak()}
           </div>
-          <div class="text-text-muted text-sm">Years Active</div>
+          <div class="text-text-muted text-sm">Longest Streak</div>
+        </div>
+        <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
+          <div class="text-2xl font-bold text-green">
+            {getMaxContributionsInDay()}
+          </div>
+          <div class="text-text-muted text-sm">Best Day</div>
         </div>
       </div>
+
       <div class="overflow-x-hidden">
         {#each Object.keys(githubContributions.contributions)
           .sort()
@@ -151,7 +209,7 @@
             <div class="mb-3 flex items-center justify-between">
               <h3 class="text-lg font-medium text-text">{year}</h3>
               <span class="text-text-muted text-sm"
-                >{yearTotal} contributions</span
+                >{yearTotal.toLocaleString()} contributions</span
               >
             </div>
 
@@ -161,14 +219,14 @@
             >
               {#each yearContributions as contribution, i}
                 <div
-                  class="group relative h-3 w-3 rounded-sm transition-all duration-200 hover:scale-125"
+                  class="group relative h-3 w-3 rounded-sm transition-all duration-200 hover:scale-125 hover:z-50"
                   style="background-color: {getContributionColor(
                     contribution.level,
                   )};"
                   in:fade={{ duration: 200, delay: i * 2 }}
                 >
                   <div
-                    class="pointer-events-none absolute -top-16 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-surface0/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100"
+                    class="pointer-events-none fixed -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-surface0/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100"
                   >
                     {contribution.count} contributions on {formatContributionDate(
                       contribution.date,
@@ -193,6 +251,10 @@
         </div>
         <span class="text-text-muted text-sm">More</span>
       </div>
+    </div>
+  {:else}
+    <div class="text-center p-8">
+      <div class="text-text-muted">Loading contributions...</div>
     </div>
   {/if}
 </section>
