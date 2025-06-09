@@ -15,6 +15,7 @@
 		"@catppuccin/tailwindcss": "^0.1.6",
 		"@sveltejs/kit": "^2.21.1",
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
+		"@types/cheerio": "^1.0.0",
 		"autoprefixer": "^10.4.21",
 		"globals": "^15.15.0",
 		"svelte": "^5.30.2",
@@ -26,7 +27,9 @@
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.511.0",
-		"@resvg/resvg-js": "^2.6.2"
+		"@resvg/resvg-js": "^2.6.2",
+		"cheerio": "^1.1.0",
+		"lodash": "^4.17.21"
 	},
 	"engines": {
 		"node": ">=18.18.0"

@@ -2,7 +2,7 @@ const themeColors = {
     base: '#1e1e2e',
     mantle: '#181825',
     crust: '#11111b',
-    surface0: '#313244', // Adding explicit surface0 color
+    surface0: '#313244',
     surface1: '#45475a',
     text: '#cdd6f4',
     subtext0: '#a6adc8',

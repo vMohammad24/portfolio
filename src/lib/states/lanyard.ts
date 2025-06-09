@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { discordId, lanyardDomain } from '$lib/data/constants';
-import type { LanyardResponse } from '$lib/types/landyard';
+import type { LanyardResponse } from '$lib/types';
 import { writable } from 'svelte/store';
 
 const DOMAIN = 'lanyard.vmohammad.dev';
