@@ -57,9 +57,6 @@
   id="header"
   class="hover:shadow-purple/20 relative overflow-hidden rounded-xl bg-gradient-to-r from-base/80 via-base/70 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 md:col-span-12"
 >
-  <div
-    class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-crust/20 to-transparent"
-  ></div>
   <div class="relative z-10 flex flex-col items-center gap-8 md:flex-row">
     <div class="group relative" in:fade={{ duration: 600, delay: 300 }}>
       {#if $lanyardStore?.discord_user.avatar_decoration_data}
@@ -69,18 +66,16 @@
           alt="Avatar Decoration"
         />
       {/if}
-      {#if $lanyardStore?.discord_user}
-        <img
-          class="z-5 h-32 w-32 rounded-full border-2 border-surface0 object-cover shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:border-lavender"
-          src={$lanyardStore.discord_user
-            ? `https://cdn.discordapp.com/avatars/${
-                $lanyardStore.discord_user.id
-              }/${$lanyardStore.discord_user.avatar}.webp?size=1024`
-            : "https://cdn.discordapp.com/embed/avatars/0.png"}
-          alt="Avatar"
-          loading="eager"
-        />
-      {/if}
+      <img
+        class="z-5 h-32 w-32 rounded-full border-2 border-surface0 object-cover shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:border-lavender"
+        src={$lanyardStore?.discord_user
+          ? `https://cdn.discordapp.com/avatars/${
+              $lanyardStore.discord_user.id
+            }/${$lanyardStore.discord_user.avatar}.webp?size=1024`
+          : "https://cdn.discordapp.com/embed/avatars/0.png"}
+        alt="Avatar"
+        loading="eager"
+      />
       <div
         class="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface0 bg-mantle"
       >
