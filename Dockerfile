@@ -2,7 +2,13 @@ FROM oven/bun:debian AS base
 WORKDIR /usr/src/app
 
 RUN apt-get update && \
-    apt-get install -y fonts-noto fonts-segoe-ui fontconfig && \
+    apt-get install -y fonts-noto git fontconfig && \
+    git clone https://github.com/mrbvrz/segoe-ui-linux && \
+    cd segoe-ui-linux && \
+    chmod +x install.sh && \
+    ./install.sh && \
+    cd .. && \
+    rm -rf segoe-ui-linux && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* && \
