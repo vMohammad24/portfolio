@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { Activity } from "$lib/types";
   import { backOut } from "svelte/easing";
   import { fly, slide } from "svelte/transition";
   interface Props {
-    regularActivities: any[];
+    regularActivities: Activity[];
     currentTime: number;
   }
 

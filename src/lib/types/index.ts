@@ -186,6 +186,41 @@ export interface LanyardResponse {
     activities: Activity[];
 }
 
+// LYRICS API
+
+export interface EnhancedLyricsResponse {
+    enhancedLyrics: EnhancedLyric[];
+}
+
+
+interface EnhancedLyric {
+    time: number;
+    text: string;
+    words: {
+        time: number;
+        word: string;
+        endTime: number;
+        isParenthetical: boolean;
+        confidence: null;
+        syllableCount: number;
+        characters: Character[];
+    }[];
+    confidence: number | null;
+    characters: Character[];
+}
+
+interface Character {
+    time: number;
+    char: string;
+    endTime: number;
+    isVowel: boolean;
+    isSilent: boolean;
+    confidence: number | null;
+    phoneme: string;
+}
+
+
+
 
 // PROJECT
 

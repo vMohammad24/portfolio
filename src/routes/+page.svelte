@@ -10,6 +10,7 @@
   import GitHubSection from "$lib/components/sections/GitHubSection.svelte";
   import HeroSection from "$lib/components/sections/HeroSection.svelte";
   import LanguagesSection from "$lib/components/sections/LanguagesSection.svelte";
+  import LyricsSection from "$lib/components/sections/LyricsSection.svelte";
   import ProjectsSection from "$lib/components/sections/ProjectsSection.svelte";
   import SkillsSection from "$lib/components/sections/SkillsSection.svelte";
   import SocialsSection from "$lib/components/sections/SocialsSection.svelte";
@@ -75,7 +76,6 @@
       throw error;
     }
   }
-
   let customStatus = $derived(
     $lanyardStore?.activities?.find((activity) => activity.type === 4),
   );
@@ -181,6 +181,7 @@
     <ActivitiesSection {regularActivities} {currentTime} />
     <LanguagesSection />
     <SkillsSection />
+    <LyricsSection {currentTime} />
     <ProjectsSection {projects} />
     <WakaTimeSection
       {wakaTimeData}
