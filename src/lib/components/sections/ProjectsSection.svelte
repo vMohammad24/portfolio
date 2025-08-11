@@ -7,7 +7,7 @@
     projects: ProjectData[];
   }
 
-  let { projects }: Props = $props();
+  const { projects }: Props = $props();
 </script>
 
 <section
@@ -93,15 +93,6 @@
                 >({project.wakatimeStats.percent.toFixed(1)}%)</span
               >
             </span>
-          </div>
-        {:else if project.wakatimeName}
-          <div
-            class="mt-auto flex items-center gap-2 rounded-lg bg-surface0/20 p-3"
-          >
-            <div class="h-3 w-3 animate-pulse rounded-full bg-surface0"></div>
-            <span class="text-text-muted text-sm"
-              >Loading WakaTime stats...</span
-            >
           </div>
         {/if}
       </div>

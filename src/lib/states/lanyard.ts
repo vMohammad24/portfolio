@@ -3,7 +3,7 @@ import { discordId, lanyardDomain } from '$lib/data/constants';
 import type { LanyardResponse } from '$lib/types';
 import { writable } from 'svelte/store';
 
-const DOMAIN = 'lanyard.vmohammad.dev';
+const DOMAIN = lanyardDomain;
 function formatData(data: LanyardResponse) {
     if (data.activities.length > 0) {
         data.activities = data.activities.map(activity => {

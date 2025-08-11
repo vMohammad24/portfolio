@@ -7,7 +7,7 @@
     githubError: string | null;
   }
 
-  let { githubContributions, githubError }: Props = $props();
+  const { githubContributions, githubError }: Props = $props();
 
   function getContributionColor(level: number): string {
     switch (level) {
@@ -48,7 +48,7 @@
 
     const today = new Date();
     let streak = 0;
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
 
     for (let i = 0; i < 365; i++) {
       const year = currentDate.getFullYear();
@@ -75,13 +75,13 @@
   function getMaxContributionsInDay(): number {
     if (!githubContributions) return 0;
     let max = 0;
-    Object.values(githubContributions.contributions).forEach((year) => {
-      Object.values(year).forEach((month) => {
-        Object.values(month).forEach((day) => {
+    for (const year of Object.values(githubContributions.contributions)) {
+      for (const month of Object.values(year)) {
+        for (const day of Object.values(month)) {
           if (day && day.count > max) max = day.count;
-        });
-      });
-    });
+        }
+      }
+    }
     return max;
   }
 
@@ -90,22 +90,22 @@
     let longestStreak = 0;
     let currentStreak = 0;
     const allDates: { date: Date; count: number }[] = [];
-    Object.entries(githubContributions.contributions).forEach(
-      ([year, yearData]) => {
-        Object.entries(yearData).forEach(([month, monthData]) => {
-          Object.entries(monthData).forEach(([day, contribution]) => {
-            allDates.push({
-              date: new Date(
-                parseInt(year),
-                parseInt(month) - 1,
-                parseInt(day),
-              ),
-              count: contribution?.count || 0,
-            });
+    for (const [year, yearData] of Object.entries(
+      githubContributions.contributions,
+    )) {
+      for (const [month, monthData] of Object.entries(yearData)) {
+        for (const [day, contribution] of Object.entries(monthData)) {
+          allDates.push({
+            date: new Date(
+              Number.parseInt(year),
+              Number.parseInt(month) - 1,
+              Number.parseInt(day),
+            ),
+            count: contribution?.count || 0,
           });
-        });
-      },
-    );
+        }
+      }
+    }
 
     allDates.sort((a, b) => a.date.getTime() - b.date.getTime());
 
@@ -203,7 +203,7 @@
           .reverse()
           .slice(0, 3) as year}
           {@const yearContributions = getContributionsForYear(parseInt(year))}
-          {@const yearTotal = githubContributions.total[year] || 0}
+          {@const yearTotal = githubContributions.total[year]}
 
           <div class="mb-6">
             <div class="mb-3 flex items-center justify-between">

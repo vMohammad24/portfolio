@@ -1,3 +1,5 @@
+import { env } from "$env/dynamic/public";
+
 const themeColors = {
     base: '#1e1e2e',
     mantle: '#181825',
@@ -149,6 +151,6 @@ const socials = [
 ];
 const birthday = new Date("2009-08-06");
 const discordId = '840854894881538079';
-const lanyardDomain = 'lanyard.vmohammad.dev'
+const lanyardDomain = env.PUBLIC_LANYARD_DOMAIN ?? 'lanyard.vmohammad.dev'
 export { birthday, discordId, languages, lanyardDomain, skills, socials, themeColors };
 

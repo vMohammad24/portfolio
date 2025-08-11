@@ -1,8 +1,4 @@
 <script lang="ts">
-  import {
-    extractProjectStats,
-    fetchWakaTimeStats,
-  } from "$lib/client/wakatime";
   import Background from "$lib/components/Background.svelte";
   import AboutSection from "$lib/components/sections/AboutSection.svelte";
   import ActivitiesSection from "$lib/components/sections/ActivitiesSection.svelte";
@@ -14,32 +10,26 @@
   import ProjectsSection from "$lib/components/sections/ProjectsSection.svelte";
   import SkillsSection from "$lib/components/sections/SkillsSection.svelte";
   import SocialsSection from "$lib/components/sections/SocialsSection.svelte";
-  import WakaTimeSection from "$lib/components/sections/WakaTimeSection.svelte";
   import { birthday } from "$lib/data/constants";
   import { lanyardStore } from "$lib/states/lanyard";
-  import type {
-    GitHubContributions,
-    ProjectData,
-    WakaTimeStats,
-  } from "$lib/types";
+  import type { GitHubContributions, ProjectData } from "$lib/types";
   import { ArrowUp } from "@lucide/svelte";
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
 
   let age = $state(0);
   let currentTime = $state(Date.now());
-  let wakaTimeData: WakaTimeStats | null = $state(null);
-  let wakaTimeError: string | null = $state(null);
+  // let wakaTimeData: WakaTimeStats | null = $state(null);
+  // let wakaTimeError: string | null = $state(null);
   let githubContributions: GitHubContributions | null = $state(null);
   let githubError: string | null = $state(null);
-  let projects: ProjectData[] = $state([
+  const projects: ProjectData[] = $state([
     {
       name: "NaviThingy",
       description:
         "A Navidrome/Subsonic client for Desktop providing the best experience possible.",
       link: "https://github.com/vmohammad24/NaviThingy/",
       wakatimeName: "NaviThingy",
-      wakatimeStats: null,
       logo: "https://raw.githubusercontent.com/vMohammad24/NaviThingy/refs/heads/main/static/logo.svg",
       techs: ["Tauri", "Svelte", "Bun", "Rust"],
     },
@@ -48,7 +38,6 @@
       description: `A translation layer for Tidal's API to make it compatible with Subsonic clients.`,
       link: "https://tidal.vmohammad.dev",
       wakatimeName: "tidal",
-      wakatimeStats: null,
       logo: "https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://tidal.com",
       techs: ["Bun", "Typescript", "SQLite", "Redis"],
     },
@@ -58,7 +47,6 @@
         "An end to end encrypted search engine providing you with privacy and security.",
       link: "https://search.vmohammad.dev",
       wakatimeName: "peekless",
-      wakatimeStats: null,
       logo: "https://search.vmohammad.dev/public/img/favicon.svg",
       techs: ["Bun", "TypeScript", "Redis"],
     },
@@ -76,10 +64,10 @@
       throw error;
     }
   }
-  let customStatus = $derived(
+  const customStatus = $derived(
     $lanyardStore?.activities?.find((activity) => activity.type === 4),
   );
-  let regularActivities = $derived(
+  const regularActivities = $derived(
     $lanyardStore?.activities?.filter((activity) => activity.type !== 4) || [],
   );
   let showBackToTop = $state(false);
@@ -98,37 +86,14 @@
       currentTime = Date.now();
     }, 250);
 
-    try {
-      (async () => {
-        [wakaTimeData, githubContributions] = await Promise.all([
-          fetchWakaTimeStats(),
-          fetchGitHubContributions(),
-        ]);
-        if (wakaTimeData?.data?.projects) {
-          const wakatimeProjectNames = projects
-            .filter((p) => p.wakatimeName)
-            .map((p) => p.wakatimeName as string);
-
-          const projectStats = extractProjectStats(
-            wakaTimeData,
-            wakatimeProjectNames,
-          );
-
-          projects = projects.map((project) => {
-            if (project.wakatimeName && projectStats[project.wakatimeName]) {
-              return {
-                ...project,
-                wakatimeStats: projectStats[project.wakatimeName],
-              };
-            }
-            return project;
-          });
-        }
-      })();
-    } catch (error) {
-      wakaTimeError = "Failed to load WakaTime stats";
-      githubError = "Failed to load GitHub contributions";
-    }
+    fetchGitHubContributions()
+      .then((data) => {
+        githubContributions = data;
+      })
+      .catch((error) => {
+        githubError = "Failed to load GitHub contributions";
+        console.error(error);
+      });
 
     const handleScroll = () => {
       showBackToTop = window.scrollY > 500;
@@ -183,13 +148,13 @@
     <SkillsSection />
     <LyricsSection {currentTime} />
     <ProjectsSection {projects} />
-    <WakaTimeSection
+    <!-- <WakaTimeSection
       {wakaTimeData}
       {wakaTimeError}
       radius={50}
       strokeWidth={5}
       center={60}
-    />
+    /> -->
     <GitHubSection {githubContributions} {githubError} />
     <SocialsSection />
     <FooterSection />
