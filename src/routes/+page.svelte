@@ -65,10 +65,10 @@
     }
   }
   const customStatus = $derived(
-    $lanyardStore?.activities?.find((activity) => activity.type === 4),
+    $lanyardStore?.activities?.find((activity) => activity.type === 4)
   );
   const regularActivities = $derived(
-    $lanyardStore?.activities?.filter((activity) => activity.type !== 4) || [],
+    $lanyardStore?.activities?.filter((activity) => activity.type !== 4) || []
   );
   let showBackToTop = $state(false);
 
@@ -111,7 +111,7 @@
   const pain = `https://vmohammad.dev/avatar?${encodeURIComponent(
     Array.from(crypto.getRandomValues(new Uint8Array(20)))
       .map((byte) => String.fromCharCode(33 + (byte % 94)))
-      .join(""),
+      .join("")
   )}`;
 </script>
 
@@ -146,7 +146,7 @@
     <ActivitiesSection {regularActivities} {currentTime} />
     <LanguagesSection />
     <SkillsSection />
-    <LyricsSection {currentTime} />
+    <LyricsSection bind:currentTime />
     <ProjectsSection {projects} />
     <!-- <WakaTimeSection
       {wakaTimeData}

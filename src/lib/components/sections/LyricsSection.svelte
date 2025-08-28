@@ -2,16 +2,16 @@
   import { lanyardStore } from "$lib/states/lanyard";
   import type { EnhancedLyricsResponse } from "$lib/types";
   import { viewport } from "$lib/utils/intersection";
-  import { AlertTriangle, Music2 } from "@lucide/svelte";
+  import { Music2, Pause, Play, TriangleAlert } from "@lucide/svelte";
   import { fade } from "svelte/transition";
 
   interface Props {
     currentTime: number;
   }
 
-  let { currentTime }: Props = $props();
+  let { currentTime = $bindable(0) }: Props = $props();
 
-  let activeSong: {
+  let rawSong: {
     song: string;
     artist: string;
   } | null = $derived.by(() => {
@@ -21,27 +21,239 @@
         artist: $lanyardStore?.spotify.artist,
       };
     const activity = $lanyardStore?.activities?.find(
-      (activity) => activity.type === 2,
+      (activity) => activity.type === 2
     );
     return activity
       ? { song: activity.details, artist: activity.state.split(",")[0] }
       : null;
   });
-  let lyrics: Promise<EnhancedLyricsResponse | null> = $derived.by(async () => {
-    if (!activeSong) {
-      return null;
+
+  let previousSearchKey = $state<string>("");
+  let songData = $state<
+    Promise<{
+      song: string;
+      artist: string;
+      previewUrl: string | null;
+      releaseDate: string | null;
+      artwork: {
+        url: string;
+        bgColor: string;
+        textColor1: string;
+        textColor2: string;
+      } | null;
+      albumName: string;
+    } | null>
+  >(Promise.resolve(null));
+
+  let activeSong = $state<{ song: string; artist: string } | null>(null);
+
+  $effect(() => {
+    songData.then((data) => {
+      activeSong = data ? { song: data.song, artist: data.artist } : rawSong;
+    });
+  });
+
+  $effect(() => {
+    if (!rawSong) {
+      previousSearchKey = "";
+      songData = Promise.resolve(null);
+      return;
     }
-    const res = await fetch(
-      `https://api.vmohammad.dev/lyrics?track=${encodeURIComponent(activeSong.song)}&artist=${encodeURIComponent(activeSong.artist)}`,
-    );
-    if (!res.ok) {
-      return null;
+
+    const currentSearchKey = `${rawSong.song}|${rawSong.artist}`;
+
+    if (currentSearchKey !== previousSearchKey) {
+      previousSearchKey = currentSearchKey;
+      songData = (async () => {
+        try {
+          if ($lanyardStore?.spotify) {
+            const res = await fetch(
+              `https://api.vmohammad.dev/apple/search?q=${encodeURIComponent(rawSong.song)} ${encodeURIComponent(rawSong.artist)}`
+            );
+            if (res.ok) {
+              const data = await res.json();
+              const song = data?.results?.song?.data?.[0];
+              if (song) {
+                return {
+                  song: song.name,
+                  artist: song.attributes.artistName,
+                  releaseDate: song.attributes.releaseDate || null,
+                  previewUrl: song.attributes?.previews?.[0]?.url || null,
+                  artwork: song.attributes?.artwork
+                    ? {
+                        url: song.attributes.artwork.url.replace(
+                          "{w}x{h}",
+                          "300x300"
+                        ),
+                        bgColor: song.attributes.artwork.bgColor || "0d0f0e",
+                        textColor1:
+                          song.attributes.artwork.textColor1 || "f9f4ef",
+                        textColor2:
+                          song.attributes.artwork.textColor2 || "e1b235",
+                      }
+                    : null,
+                  albumName: song.attributes?.albumName || "",
+                };
+              }
+            }
+            return {
+              song: rawSong.song,
+              artist: rawSong.artist,
+              previewUrl: null,
+              artwork: null,
+              albumName: "",
+              releaseDate: null,
+            };
+          }
+
+          const res = await fetch(
+            `https://api.vmohammad.dev/apple/search?q=${encodeURIComponent(rawSong.song)} ${encodeURIComponent(rawSong.artist)}`
+          );
+          if (!res.ok) {
+            return {
+              song: rawSong.song,
+              artist: rawSong.artist,
+              previewUrl: null,
+              artwork: null,
+              albumName: "",
+              releaseDate: null,
+            };
+          }
+          const data = await res.json();
+          const song = data?.results?.song?.data?.[0];
+          if (song) {
+            return {
+              song: song.attributes.name,
+              artist: song.attributes.artistName,
+              previewUrl: song.attributes?.previews?.[0]?.url || null,
+              artwork: song.attributes?.artwork
+                ? {
+                    url: song.attributes.artwork.url.replace(
+                      "{w}x{h}",
+                      "300x300"
+                    ),
+                    bgColor: song.attributes.artwork.bgColor || "0d0f0e",
+                    textColor1: song.attributes.artwork.textColor1 || "f9f4ef",
+                    textColor2: song.attributes.artwork.textColor2 || "e1b235",
+                  }
+                : null,
+              albumName: song.attributes?.albumName || "",
+              releaseDate: song.attributes?.releaseDate || null,
+            };
+          }
+          return {
+            song: rawSong.song,
+            artist: rawSong.artist,
+            previewUrl: null,
+            artwork: null,
+            albumName: "",
+            releaseDate: null,
+          };
+        } catch (error) {
+          console.error("Failed to fetch song data:", error);
+          return {
+            song: rawSong.song,
+            artist: rawSong.artist,
+            previewUrl: null,
+            artwork: null,
+            albumName: "",
+            releaseDate: null,
+          };
+        }
+      })();
     }
-    const data = await res.json();
-    if (data && data.enhancedLyrics) {
-      return data as EnhancedLyricsResponse;
+  });
+
+  let audioElement = $state<HTMLAudioElement>();
+  let isPlaying = $state(false);
+  let audioCurrentTime = $state(0);
+  let duration = $state(0);
+  let isLoading = $state(false);
+
+  function togglePlayback() {
+    if (!audioElement) return;
+
+    if (isPlaying) {
+      audioElement.pause();
+    } else {
+      isLoading = true;
+      audioElement.play().catch(console.error);
     }
-    return null;
+  }
+
+  function onTimeUpdate() {
+    if (audioElement) {
+      audioCurrentTime = audioElement.currentTime;
+    }
+  }
+
+  function onLoadedMetadata() {
+    if (audioElement) {
+      duration = audioElement.duration;
+    }
+  }
+
+  function onPlay() {
+    isPlaying = true;
+    isLoading = false;
+  }
+
+  function onPause() {
+    isPlaying = false;
+    isLoading = false;
+  }
+
+  function onLoadStart() {
+    isLoading = true;
+  }
+
+  function onCanPlay() {
+    isLoading = false;
+  }
+
+  function seekTo(event: MouseEvent) {
+    if (!audioElement || !duration) return;
+
+    const progressBar = event.currentTarget as HTMLElement;
+    const rect = progressBar.getBoundingClientRect();
+    const clickPosition = (event.clientX - rect.left) / rect.width;
+    const newTime = clickPosition * duration;
+
+    audioElement.currentTime = newTime;
+  }
+
+  let previousLyricsKey = $state<string>("");
+  let lyrics = $state<Promise<EnhancedLyricsResponse | null>>(
+    Promise.resolve(null)
+  );
+
+  $effect(() => {
+    songData.then(async (data) => {
+      if (!data) {
+        previousLyricsKey = "";
+        lyrics = Promise.resolve(null);
+        return;
+      }
+
+      const currentLyricsKey = `${data.song}|${data.artist}`;
+
+      if (currentLyricsKey !== previousLyricsKey) {
+        previousLyricsKey = currentLyricsKey;
+        lyrics = (async () => {
+          const res = await fetch(
+            `https://api.vmohammad.dev/lyrics?track=${encodeURIComponent(data.song)}&artist=${encodeURIComponent(data.artist)}`
+          );
+          if (!res.ok) {
+            return null;
+          }
+          const lyricsData = await res.json();
+          if (lyricsData && lyricsData.enhancedLyrics) {
+            return lyricsData as EnhancedLyricsResponse;
+          }
+          return null;
+        })();
+      }
+    });
   });
   let sectionElement = $state<HTMLElement>();
   let lyricsContainer = $state<HTMLElement>();
@@ -56,7 +268,7 @@
   function isWordActive(
     wordTime: number,
     wordEndTime: number,
-    songStartTime: number,
+    songStartTime: number
   ): boolean {
     const currentSongTime = getElapsedTime(songStartTime);
     return currentSongTime >= wordTime && currentSongTime < wordEndTime;
@@ -65,7 +277,7 @@
   function isLineActive(
     lineTime: number,
     nextLineTime: number | null,
-    songStartTime: number,
+    songStartTime: number
   ): boolean {
     const currentSongTime = getElapsedTime(songStartTime);
     const lineEndInSong = nextLineTime ? nextLineTime : lineTime + 5;
@@ -151,72 +363,131 @@
     }
 
     const musicActivity = $lanyardStore?.activities?.find(
-      (activity) => activity.type === 2,
+      (activity) => activity.type === 2
     );
     return musicActivity?.timestamps?.start || null;
   });
 </script>
 
-{#if activeSong}
+{#if rawSong}
   <section
     bind:this={sectionElement}
     id="lyrics"
-    class="transform rounded-2xl bg-base/90 p-8 shadow-2xl backdrop-blur-md transition-all duration-500 hover:shadow-purple/30 hover:scale-[1.02] md:col-span-12 border border-surface0/30"
+    class="transform rounded-xl bg-base/90 p-6 shadow-lg backdrop-blur-md transition-all duration-300 md:col-span-12 border border-surface0/30"
     use:viewport.intersection
     class:animate-slide-up={sectionElement
       ? $viewport.get(sectionElement)
       : false}
   >
     <div class="relative">
-      <div class="mb-8">
-        <h2
-          class="group relative mb-6 inline-block text-2xl font-bold text-text"
-        >
-          <Music2 class="inline-block mr-2 h-8 w-8 text-purple" />
+      <div class="mb-6">
+        <h2 class="mb-4 inline-block text-xl font-bold text-text">
+          <Music2 class="inline-block mr-2 h-6 w-6 text-blue" />
           Now Playing
-          <span
-            class="absolute bottom-0 left-0 h-1 w-0 bg-teal transition-all duration-500 group-hover:w-full"
-          ></span>
         </h2>
 
-        <div class="space-y-2">
-          <h3 class="text-2xl font-semibold text-text leading-tight">
-            {activeSong.song}
-          </h3>
-          <p class="text-text-muted text-lg flex items-center gap-2">
-            <span class="w-1 h-1 bg-purple rounded-full"></span>
-            by {activeSong.artist}
-          </p>
-        </div>
+        {#await songData}
+          <div class="space-y-2">
+            <div class="h-6 bg-surface0/30 rounded animate-pulse"></div>
+            <div class="h-4 bg-surface0/20 rounded animate-pulse w-2/3"></div>
+          </div>
+        {:then data}
+          {#if data}
+            <div class="space-y-2">
+              <h3 class="text-lg font-semibold text-text leading-tight">
+                {data.song} by {data.artist}
+              </h3>
+            </div>
+
+            {#if data.previewUrl && data.artwork}
+              <div
+                class="mt-4 p-3 rounded-lg border border-surface0/30 bg-surface0/10"
+              >
+                <div class="flex items-center gap-3">
+                  <img
+                    src={data.artwork.url}
+                    alt="Album artwork"
+                    class="w-12 h-12 rounded-md object-cover"
+                  />
+
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-text truncate">
+                      {data.song}
+                    </p>
+                    <p class="text-xs text-text-muted truncate">
+                      {data.artist}
+                      {#if data.releaseDate}<span class="text-opacity-50">
+                          •
+                          {new Date(data.releaseDate).getFullYear()}</span
+                        >{/if}
+                    </p>
+                  </div>
+
+                  <button
+                    onclick={togglePlayback}
+                    disabled={isLoading}
+                    class="flex items-center justify-center w-10 h-10 rounded-full bg-blue/20 hover:bg-blue/30 border border-blue/40 transition-all duration-200 disabled:opacity-50"
+                  >
+                    {#if isLoading}
+                      <div
+                        class="w-4 h-4 border-2 border-blue border-t-transparent rounded-full animate-spin"
+                      ></div>
+                    {:else if isPlaying}
+                      <Pause class="w-4 h-4 text-blue" />
+                    {:else}
+                      <Play class="w-4 h-4 ml-0.5 text-blue" />
+                    {/if}
+                  </button>
+                </div>
+
+                {#if duration > 0}
+                  <div class="mt-3">
+                    <button
+                      type="button"
+                      class="w-full h-2 rounded-full cursor-pointer bg-surface0/40 overflow-hidden"
+                      aria-label="Seek audio"
+                      onclick={seekTo}
+                    >
+                      <div
+                        class="h-full bg-blue transition-all duration-200"
+                        style="width: {(audioCurrentTime / duration) * 100}%;"
+                      ></div>
+                    </button>
+                    <div
+                      class="flex justify-between mt-1 text-xs text-text-muted"
+                    >
+                      <span>{Math.floor(audioCurrentTime)}s</span>
+                      <span>{Math.floor(duration)}s</span>
+                    </div>
+                  </div>
+                {/if}
+
+                <audio
+                  bind:this={audioElement}
+                  src={data.previewUrl}
+                  ontimeupdate={onTimeUpdate}
+                  onloadedmetadata={onLoadedMetadata}
+                  onplay={onPlay}
+                  onpause={onPause}
+                  onloadstart={onLoadStart}
+                  oncanplay={onCanPlay}
+                  preload="metadata"
+                ></audio>
+              </div>
+            {/if}
+          {/if}
+        {/await}
       </div>
       {#await lyrics}
         <div
           class="flex items-center justify-center p-12"
           in:fade={{ duration: 400 }}
         >
-          <div class="flex flex-col items-center gap-4">
-            <div class="relative">
-              <div
-                class="h-8 w-8 animate-spin rounded-full border-3 border-purple/30 border-t-purple"
-              ></div>
-              <div
-                class="absolute inset-0 h-8 w-8 animate-pulse rounded-full border-2 border-purple/20"
-              ></div>
-            </div>
-            <span class="text-text-muted text-lg font-medium"
-              >Loading lyrics...</span
-            >
-            <div class="flex gap-1">
-              <div class="w-2 h-2 bg-purple rounded-full animate-bounce"></div>
-              <div
-                class="w-2 h-2 bg-purple rounded-full animate-bounce"
-                style="animation-delay: 0.1s"
-              ></div>
-              <div
-                class="w-2 h-2 bg-purple rounded-full animate-bounce"
-                style="animation-delay: 0.2s"
-              ></div>
-            </div>
+          <div class="flex flex-col items-center gap-3">
+            <div
+              class="h-6 w-6 animate-spin rounded-full border-2 border-blue/30 border-t-blue"
+            ></div>
+            <span class="text-text-muted text-base">Loading lyrics...</span>
           </div>
         </div>
       {:then lyricsData}
@@ -229,7 +500,7 @@
               {#each lyricsData.enhancedLyrics as line, i}
                 {#if i === currentLyricIndex}
                   <div
-                    class="text-2xl leading-relaxed min-h-[60px] p-5 rounded-xl bg-purple/20 shadow-lg transform transition-all duration-300"
+                    class="text-2xl leading-relaxed min-h-[60px] p-5 rounded-xl shadow-lg transform transition-all duration-300"
                     bind:this={currentLyricElement}
                     in:fade={{
                       duration: 300,
@@ -239,18 +510,18 @@
                       {#each line.words as word, wordIndex}
                         {#if word.isParenthetical}
                           <span
-                            class="inline-block mr-1 opacity-70 text-text-muted font-light italic transition-all duration-300 ease-out hover:text-purple/80 cursor-pointer {wordIndex ===
+                            class="inline-block mr-1 opacity-70 text-text-muted font-light italic transition-all duration-300 ease-out hover:text-blue/80 cursor-pointer {wordIndex ===
                             currentWordIndex
-                              ? 'text-purple scale-105'
+                              ? 'text-blue scale-105'
                               : 'scale-100'}"
                           >
                             {word.word}
                           </span>
                         {:else}
                           <span
-                            class="inline-block mr-1 transition-all duration-300 ease-out hover:text-purple cursor-pointer
+                            class="inline-block mr-1 transition-all duration-300 ease-out hover:text-blue cursor-pointer
                               {wordIndex <= currentWordIndex
-                              ? 'text-purple'
+                              ? 'text-blue'
                               : ''} 
                               {wordIndex === currentWordIndex
                               ? 'font-semibold scale-105'
@@ -261,15 +532,15 @@
                         {/if}
                       {/each}
                     {:else}
-                      <span class="text-purple font-medium">
-                        {line.text || "♪ [Instrumental] ♪"}
+                      <span class="text-blue font-medium">
+                        {line.text || "♪"}
                       </span>
                     {/if}
                   </div>
                 {:else}
                   <div class="min-h-[60px] relative">
                     <p
-                      class="text-xl leading-relaxed whitespace-pre-wrap cursor-pointer hover:text-purple p-4 rounded-lg hover:bg-purple/5
+                      class="text-xl leading-relaxed whitespace-pre-wrap cursor-pointer hover:text-blue p-4 rounded-lg hover:bg-blue/5
                              transition-all duration-300 absolute inset-0
                              {i < currentLyricIndex
                         ? 'opacity-40'
@@ -291,56 +562,38 @@
           </div>
         {:else}
           <div
-            class="text-center p-12 rounded-xl bg-surface0/30 backdrop-blur-sm border border-surface0/20"
+            class="text-center p-8 rounded-lg bg-surface0/20 border border-surface0/20"
             in:fade={{ duration: 400 }}
           >
             <div class="text-text-muted">
-              <div class="flex justify-center mb-6">
-                <div class="relative">
-                  <Music2 class="h-16 w-16 text-purple/60" />
-                  <div
-                    class="absolute inset-0 h-16 w-16 bg-purple/20 rounded-full animate-ping"
-                  ></div>
-                </div>
+              <div class="flex justify-center mb-4">
+                <Music2 class="h-12 w-12 text-blue/60" />
               </div>
-              <h3 class="mb-3 text-xl font-semibold text-text">
+              <h3 class="mb-2 text-lg font-semibold text-text">
                 No Lyrics Available
               </h3>
-              <p class="text-base opacity-80 max-w-md mx-auto leading-relaxed">
+              <p class="text-sm opacity-80 max-w-md mx-auto">
                 We couldn't find the lyrics for this song.
               </p>
-              <div class="mt-6 flex justify-center">
-                <div class="flex gap-1">
-                  <div class="w-2 h-2 bg-purple/40 rounded-full"></div>
-                  <div class="w-2 h-2 bg-purple/60 rounded-full"></div>
-                  <div class="w-2 h-2 bg-purple/40 rounded-full"></div>
-                </div>
-              </div>
             </div>
           </div>
         {/if}
       {:catch error}
         <div
-          class="text-center p-12 rounded-xl bg-red/10 border border-red/20 backdrop-blur-sm"
+          class="text-center p-8 rounded-lg bg-red/10 border border-red/20"
           in:fade={{ duration: 400 }}
         >
           <div class="text-red">
-            <div class="flex justify-center mb-6">
-              <div class="relative">
-                <AlertTriangle class="h-16 w-16" />
-                <div
-                  class="absolute inset-0 h-16 w-16 bg-red/20 rounded-full animate-pulse"
-                ></div>
-              </div>
+            <div class="flex justify-center mb-4">
+              <TriangleAlert class="h-12 w-12" />
             </div>
-            <h3 class="mb-3 text-xl font-semibold">Failed to Load Lyrics</h3>
-            <p class="text-base opacity-80 max-w-md mx-auto leading-relaxed">
-              Unable to fetch lyrics data from the server. Please check your
-              connection and try again.
+            <h3 class="mb-2 text-lg font-semibold">Failed to Load Lyrics</h3>
+            <p class="text-sm opacity-80 max-w-md mx-auto">
+              Unable to fetch lyrics data from the server.
             </p>
-            <div class="mt-6">
+            <div class="mt-4">
               <button
-                class="px-4 py-2 bg-red/20 hover:bg-red/30 rounded-lg transition-colors duration-200 text-sm font-medium"
+                class="px-3 py-2 bg-red/20 hover:bg-red/30 rounded-lg transition-colors duration-200 text-sm"
                 onclick={() => window.location.reload()}
               >
                 Retry
