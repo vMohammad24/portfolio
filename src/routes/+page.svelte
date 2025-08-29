@@ -10,6 +10,7 @@
   import ProjectsSection from "$lib/components/sections/ProjectsSection.svelte";
   import SkillsSection from "$lib/components/sections/SkillsSection.svelte";
   import SocialsSection from "$lib/components/sections/SocialsSection.svelte";
+  import WatchingSection from "$lib/components/sections/WatchingSection.svelte";
   import { birthday } from "$lib/data/constants";
   import { lanyardStore } from "$lib/states/lanyard";
   import type { GitHubContributions, ProjectData } from "$lib/types";
@@ -147,6 +148,7 @@
     <LanguagesSection />
     <SkillsSection />
     <LyricsSection bind:currentTime />
+    <WatchingSection bind:currentTime />
     <ProjectsSection {projects} />
     <!-- <WakaTimeSection
       {wakaTimeData}
