@@ -12,13 +12,11 @@ RUN apt-get update && \
     mkdir -p /usr/share/fonts/truetype/system-ui && \
     wget -O /tmp/inter.zip "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip" && \
     unzip /tmp/inter.zip -d /tmp/inter && \
-    cp /tmp/inter/Inter\ Desktop/*.ttf /usr/share/fonts/truetype/system-ui/ && \
-    wget -O /tmp/roboto.zip "https://fonts.google.com/download?family=Roboto" && \
-    unzip /tmp/roboto.zip -d /tmp/roboto && \
-    cp /tmp/roboto/*.ttf /usr/share/fonts/truetype/system-ui/ && \
-    wget -O /tmp/opensans.zip "https://fonts.google.com/download?family=Open%20Sans" && \
-    unzip /tmp/opensans.zip -d /tmp/opensans && \
-    cp /tmp/opensans/*.ttf /usr/share/fonts/truetype/system-ui/ && \
+    find /tmp/inter -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/system-ui/ \; && \
+    apt-get install -y fonts-roboto fonts-open-sans && \
+    find /usr/share/fonts -name "*roboto*" -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/system-ui/ \; 2>/dev/null || true && \
+    find /usr/share/fonts -name "*opensans*" -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/system-ui/ \; 2>/dev/null || true && \
+    find /usr/share/fonts -name "*open*sans*" -name "*.ttf" -exec cp {} /usr/share/fonts/truetype/system-ui/ \; 2>/dev/null || true && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* && \
