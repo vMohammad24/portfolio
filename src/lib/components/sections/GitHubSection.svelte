@@ -40,7 +40,7 @@
     if (!githubContributions) return 0;
     return Object.values(githubContributions.total).reduce(
       (sum, total) => sum + total,
-      0,
+      0
     );
   }
   function getCurrentStreak(): number {
@@ -91,7 +91,7 @@
     let currentStreak = 0;
     const allDates: { date: Date; count: number }[] = [];
     for (const [year, yearData] of Object.entries(
-      githubContributions.contributions,
+      githubContributions.contributions
     )) {
       for (const [month, monthData] of Object.entries(yearData)) {
         for (const [day, contribution] of Object.entries(monthData)) {
@@ -99,7 +99,7 @@
             date: new Date(
               Number.parseInt(year),
               Number.parseInt(month) - 1,
-              Number.parseInt(day),
+              Number.parseInt(day)
             ),
             count: contribution?.count || 0,
           });
@@ -155,7 +155,7 @@
 
 <section
   id="github"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-green/20 md:col-span-12"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-green/20 md:col-span-12"
 >
   <h2 class="group relative mb-6 inline-block text-2xl font-bold text-text">
     GitHub Contributions
@@ -171,29 +171,37 @@
   {:else if githubContributions}
     <div class="space-y-6">
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
+        <div
+          class="rounded-lg bg-secondary/20 p-4 text-center backdrop-blur-xs"
+        >
           <div class="text-2xl font-bold text-green">
             {getTotalContributions().toLocaleString()}
           </div>
-          <div class="text-text-muted text-sm">Total</div>
+          <div class="text-gray text-sm">Total</div>
         </div>
-        <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
+        <div
+          class="rounded-lg bg-secondary/20 p-4 text-center backdrop-blur-xs"
+        >
           <div class="text-2xl font-bold text-green">
             {getCurrentStreak()}
           </div>
-          <div class="text-text-muted text-sm">Current Streak</div>
+          <div class="text-gray text-sm">Current Streak</div>
         </div>
-        <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
+        <div
+          class="rounded-lg bg-secondary/20 p-4 text-center backdrop-blur-xs"
+        >
           <div class="text-2xl font-bold text-green">
             {getLongestStreak()}
           </div>
-          <div class="text-text-muted text-sm">Longest Streak</div>
+          <div class="text-gray text-sm">Longest Streak</div>
         </div>
-        <div class="rounded-lg bg-surface0/20 p-4 text-center backdrop-blur-sm">
+        <div
+          class="rounded-lg bg-secondary/20 p-4 text-center backdrop-blur-xs"
+        >
           <div class="text-2xl font-bold text-green">
             {getMaxContributionsInDay()}
           </div>
-          <div class="text-text-muted text-sm">Best Day</div>
+          <div class="text-gray text-sm">Best Day</div>
         </div>
       </div>
 
@@ -208,7 +216,7 @@
           <div class="mb-6">
             <div class="mb-3 flex items-center justify-between">
               <h3 class="text-lg font-medium text-text">{year}</h3>
-              <span class="text-text-muted text-sm"
+              <span class="text-gray text-sm"
                 >{yearTotal.toLocaleString()} contributions</span
               >
             </div>
@@ -219,17 +227,17 @@
             >
               {#each yearContributions as contribution, i}
                 <div
-                  class="group relative h-3 w-3 rounded-sm transition-all duration-200 hover:scale-125 hover:z-50"
+                  class="group relative h-3 w-3 rounded-xs transition-all duration-200 hover:scale-125 hover:z-50"
                   style="background-color: {getContributionColor(
-                    contribution.level,
+                    contribution.level
                   )};"
                   in:fade={{ duration: 200, delay: i * 2 }}
                 >
                   <div
-                    class="pointer-events-none fixed -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-surface0/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100"
+                    class="pointer-events-none fixed -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-secondary/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100"
                   >
                     {contribution.count} contributions on {formatContributionDate(
-                      contribution.date,
+                      contribution.date
                     )}
                   </div>
                 </div>
@@ -240,21 +248,21 @@
       </div>
 
       <div class="flex items-center justify-between">
-        <span class="text-text-muted text-sm">Less</span>
+        <span class="text-gray text-sm">Less</span>
         <div class="flex gap-1">
           {#each [0, 1, 2, 3, 4] as level}
             <div
-              class="h-3 w-3 rounded-sm"
+              class="h-3 w-3 rounded-xs"
               style="background-color: {getContributionColor(level)};"
             ></div>
           {/each}
         </div>
-        <span class="text-text-muted text-sm">More</span>
+        <span class="text-gray text-sm">More</span>
       </div>
     </div>
   {:else}
     <div class="text-center p-8">
-      <div class="text-text-muted">Loading contributions...</div>
+      <div class="text-gray">Loading contributions...</div>
     </div>
   {/if}
 </section>

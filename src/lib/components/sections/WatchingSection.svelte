@@ -154,7 +154,7 @@
   <section
     bind:this={sectionElement}
     id="watching"
-    class="transform rounded-xl bg-base/90 p-6 shadow-lg backdrop-blur-md transition-all duration-300 md:col-span-12 border border-surface0/30"
+    class="transform rounded-xl bg-primary/90 p-6 shadow-lg backdrop-blur-md transition-all duration-300 md:col-span-12 border border-secondary/30"
     use:viewport.intersection
     class:animate-slide-up={sectionElement
       ? $viewport.get(sectionElement)
@@ -162,7 +162,7 @@
   >
     <div class="relative">
       <div class="mb-6">
-        <h2 class="mb-4 inline-block text-xl font-bold text-text">
+        <h2 class="mb-4 inline-block text-xl font-bold text-white">
           <Tv class="inline-block mr-2 h-6 w-6 text-blue" />
           Currently Watching
         </h2>
@@ -171,42 +171,42 @@
           <div class="flex items-start gap-4">
             {#await tmdbData}
               {#if watchingData.artwork}
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                   <img
                     src={watchingData.artwork}
                     alt="Show poster"
-                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-surface0/30"
+                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-secondary/30"
                     loading="lazy"
                   />
                 </div>
               {/if}
             {:then data}
               {#if data?.poster_path}
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                   <img
                     src={`https://image.tmdb.org/t/p/w300${data.poster_path}`}
                     alt="Show poster"
-                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-surface0/30"
+                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-secondary/30"
                     loading="lazy"
                   />
                 </div>
               {:else if watchingData.artwork}
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                   <img
                     src={watchingData.artwork}
                     alt="Show poster"
-                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-surface0/30"
+                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-secondary/30"
                     loading="lazy"
                   />
                 </div>
               {/if}
             {:catch}
               {#if watchingData.artwork}
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                   <img
                     src={watchingData.artwork}
                     alt="Show poster"
-                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-surface0/30"
+                    class="w-24 h-36 rounded-lg object-cover shadow-lg border border-secondary/30"
                     loading="lazy"
                   />
                 </div>
@@ -214,12 +214,12 @@
             {/await}
 
             <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-semibold text-text leading-tight mb-1">
+              <h3 class="text-lg font-semibold text-white leading-tight mb-1">
                 {watchingData.title}
               </h3>
 
               {#if watchingData.episode && watchingData.episode !== watchingData.title}
-                <p class="text-base text-text-muted mb-2">
+                <p class="text-gray mb-2">
                   {watchingData.episode}
                 </p>
               {/if}
@@ -232,7 +232,7 @@
 
               {#if watchingData.progress !== null && watchingData.duration}
                 <div class="mt-4 space-y-2">
-                  <div class="flex items-center gap-2 text-sm text-text-muted">
+                  <div class="flex items-center gap-2 text-sm text-gray">
                     <Clock class="w-4 h-4" />
                     <span>
                       {formatTime(getElapsedTime(watchingData.startTime))} / {formatTime(
@@ -242,7 +242,7 @@
                   </div>
 
                   <div
-                    class="w-full h-2 rounded-full bg-surface0/40 overflow-hidden"
+                    class="w-full h-2 rounded-full bg-secondary/40 overflow-hidden"
                   >
                     <div
                       class="h-full bg-blue transition-all duration-1000 ease-out"
@@ -250,7 +250,7 @@
                     ></div>
                   </div>
 
-                  <p class="text-xs text-text-muted">
+                  <p class="text-xs text-gray">
                     {Math.round(watchingData.progress * 100)}% complete
                   </p>
                 </div>
@@ -260,29 +260,31 @@
 
           {#await tmdbData}
             <div
-              class="mt-4 p-4 rounded-lg bg-surface0/20 border border-surface0/20"
+              class="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary/20"
             >
               <div class="flex items-center gap-2 mb-2">
-                <div class="h-4 w-4 bg-surface0/30 rounded animate-pulse"></div>
                 <div
-                  class="h-4 bg-surface0/30 rounded animate-pulse w-20"
+                  class="h-4 w-4 bg-secondary/30 rounded-sm animate-pulse"
+                ></div>
+                <div
+                  class="h-4 bg-secondary/30 rounded-sm animate-pulse w-20"
                 ></div>
               </div>
-              <div class="h-16 bg-surface0/30 rounded animate-pulse"></div>
+              <div class="h-16 bg-secondary/30 rounded-sm animate-pulse"></div>
             </div>
           {:then data}
             {#if data}
               <div
-                class="mt-4 p-4 rounded-lg bg-surface0/20 border border-surface0/20"
+                class="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary/20"
                 transition:fade={{ duration: 300 }}
               >
                 <div class="flex items-center gap-4 mb-3">
                   <div class="flex items-center gap-1">
                     <Star class="w-4 h-4 text-yellow-400 fill-current" />
-                    <span class="text-sm font-medium text-text">
+                    <span class="text-sm font-medium text-white">
                       {data.vote_average.toFixed(1)}
                     </span>
-                    <span class="text-xs text-text-muted">
+                    <span class="text-xs text-gray">
                       ({data.vote_count.toLocaleString()} votes)
                     </span>
                   </div>
@@ -290,7 +292,7 @@
                   {#if data.release_date || data.first_air_date}
                     <div class="flex items-center gap-1">
                       <Calendar class="w-4 h-4 text-blue" />
-                      <span class="text-sm text-text-muted">
+                      <span class="text-sm text-gray">
                         {new Date(
                           (data.release_date || data.first_air_date)!
                         ).getFullYear()}
@@ -306,7 +308,7 @@
                 </div>
 
                 {#if data.overview}
-                  <p class="text-sm text-text-muted leading-relaxed">
+                  <p class="text-sm text-gray leading-relaxed">
                     {data.overview}
                   </p>
                 {/if}

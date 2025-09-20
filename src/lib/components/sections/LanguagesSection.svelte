@@ -7,7 +7,7 @@
 
 <section
   id="languages"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-yellow/20 md:col-span-8"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-yellow/20 md:col-span-8"
 >
   <h2 class="group relative mb-6 inline-block text-2xl font-bold text-text">
     Programming Languages
@@ -18,7 +18,7 @@
   <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
     {#each languages as lang, i}
       <div
-        class="bg-base-dark/30 group rounded-lg p-4 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:bg-surface0/50 hover:shadow-md"
+        class="bg-background/30 group rounded-lg p-4 shadow-xs transition-all duration-500 hover:-translate-y-1 hover:bg-secondary/50 hover:shadow-md"
         in:fly={{
           y: 20,
           duration: 400,
@@ -42,16 +42,16 @@
               {lang.name}
             </a>
           </div>
-          <span class="text-text-muted font-medium">{lang.proficiency}%</span>
+          <span class="text-gray font-medium">{lang.proficiency}%</span>
         </div>
         <div
-          class="bg-base-dark/50 relative h-3 w-full overflow-hidden rounded-full"
+          class="bg-background/50 relative h-3 w-full overflow-hidden rounded-full"
         >
           <div
-            class="absolute inset-0 bg-gradient-to-r from-blue to-lavender opacity-20"
+            class="absolute inset-0 bg-gradient-to-r from-blue to-purple opacity-20"
           ></div>
           <div
-            class="relative h-full rounded-full bg-gradient-to-r from-blue to-lavender opacity-70 transition-opacity duration-300 ease-out group-hover:opacity-100"
+            class="relative h-full rounded-full bg-gradient-to-r from-blue to-purple opacity-70 transition-opacity duration-300 ease-out group-hover:opacity-100"
             style="width: {lang.proficiency}%; --proficiency: {lang.proficiency}%;"
           ></div>
         </div>

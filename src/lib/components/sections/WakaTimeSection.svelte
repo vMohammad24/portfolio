@@ -24,9 +24,9 @@
 
 <section
   id="wakatime"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-red/20 md:col-span-12"
+  class="transform rounded-xl bg-gradient-to-br from-primary/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-red/20 md:col-span-12"
 >
-  <h2 class="group relative mb-6 inline-block text-2xl font-bold text-text">
+  <h2 class="group relative mb-6 inline-block text-2xl font-bold text-white">
     Alltime Coding Stats
     <span
       class="absolute bottom-0 left-0 h-1 w-0 bg-red transition-all duration-500 group-hover:w-full"
@@ -38,21 +38,21 @@
   {#if wakaTimeData}
     {@const chartData = prepareChartData(wakaTimeData.data.languages)}
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div class="rounded-lg bg-surface0/20 px-4 py-3 backdrop-blur-sm">
-        <span class="text-text-muted block text-sm">Total Coding Time</span>
+      <div class="rounded-lg bg-secondary/20 px-4 py-3 backdrop-blur-xs">
+        <span class="text-gray block text-sm">Total Coding Time</span>
         <span class="text-2xl font-bold text-red"
           >{wakaTimeData.data.human_readable_total}</span
         >
       </div>
       <div class="flex flex-wrap gap-4">
-        <div class="rounded-lg bg-surface0/20 px-4 py-3 backdrop-blur-sm">
-          <span class="text-text-muted block text-sm">Daily Average</span>
+        <div class="rounded-lg bg-secondary/20 px-4 py-3 backdrop-blur-xs">
+          <span class="text-gray block text-sm">Daily Average</span>
           <span class="font-medium"
             >{wakaTimeData.data.human_readable_daily_average}</span
           >
         </div>
-        <div class="rounded-lg bg-surface0/20 px-4 py-3 backdrop-blur-sm">
-          <span class="text-text-muted block text-sm">Range</span>
+        <div class="rounded-lg bg-secondary/20 px-4 py-3 backdrop-blur-xs">
+          <span class="text-gray block text-sm">Range</span>
           <span class="font-medium"
             >{wakaTimeData.data.human_readable_range}</span
           >
@@ -82,7 +82,7 @@
               stroke-width={strokeWidth}
               stroke-dasharray={calculateStrokeDashArray(
                 segment.percent,
-                radius,
+                radius
               )}
               stroke-dashoffset={-((offset * 2 * Math.PI * radius) / 100)}
               class="transition-all duration-1000"
@@ -91,10 +91,10 @@
         </svg>
         <div class="absolute inset-0 flex items-center justify-center">
           <div
-            class="flex h-28 w-28 transform flex-col items-center justify-center rounded-full bg-base/60 text-center backdrop-blur-sm transition-transform duration-500 hover:scale-110"
+            class="flex h-28 w-28 transform flex-col items-center justify-center rounded-full bg-primary/60 text-center backdrop-blur-xs transition-transform duration-500 hover:scale-110"
           >
             <p class="text-2xl font-bold">{chartData.totalTime}</p>
-            <p class="text-text-muted text-xs">Total Coding Time</p>
+            <p class="text-gray text-xs">Total Coding Time</p>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@
         <div class="grid grid-cols-2 gap-4">
           {#each chartData.segments.slice(0, 6) as segment, i}
             <div
-              class="flex transform items-center gap-3 rounded-lg bg-surface0/30 p-3 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-surface0/60 hover:shadow-md"
+              class="flex transform items-center gap-3 rounded-lg bg-secondary/30 p-3 backdrop-blur-xs transition-all duration-300 hover:-translate-y-1 hover:bg-secondary/60 hover:shadow-md"
               in:fly={{
                 y: 15,
                 duration: 400,
@@ -117,7 +117,7 @@
               ></div>
               <div class="min-w-0 flex-1">
                 <p class="truncate font-medium">{segment.name}</p>
-                <div class="text-text-muted flex justify-between text-sm">
+                <div class="text-gray flex justify-between text-sm">
                   <span>{segment.text}</span>
                   <span class="text-xs">{segment.percent.toFixed(1)}%</span>
                 </div>
@@ -129,7 +129,7 @@
         {#if wakaTimeData.data.languages.length > 6}
           <details class="group">
             <summary
-              class="text-text-muted cursor-pointer list-none text-sm hover:text-text"
+              class="text-gray cursor-pointer list-none text-sm hover:text-white"
             >
               <span class="flex items-center gap-1">
                 <ChevronDown
@@ -141,7 +141,7 @@
             <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {#each wakaTimeData.data.languages.slice(6) as lang, i}
                 <div
-                  class="flex items-center gap-2 rounded bg-surface0/20 p-2"
+                  class="flex items-center gap-2 rounded-sm bg-secondary/20 p-2"
                   in:fly={{
                     y: 10,
                     duration: 300,
@@ -154,8 +154,7 @@
                     style="background-color: {lang.color || '#ccc'}"
                   ></div>
                   <span class="truncate text-sm">{lang.name}</span>
-                  <span
-                    class="text-text-muted ml-auto whitespace-nowrap text-xs"
+                  <span class="text-gray ml-auto whitespace-nowrap text-xs"
                     >{lang.text}</span
                   >
                 </div>
@@ -167,12 +166,12 @@
     </div>
 
     {#if wakaTimeData.data.projects && wakaTimeData.data.projects.length > 0}
-      <div class="mt-8 border-t border-surface0/30 pt-6">
+      <div class="mt-8 border-t border-secondary/30 pt-6">
         <h3 class="mb-4 text-xl font-medium">Project Distribution</h3>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {#each wakaTimeData.data.projects.slice(0, 9) as project, i}
             <div
-              class="flex items-center justify-between rounded-lg bg-surface0/20 p-3 transition-all duration-300 hover:-translate-y-1 hover:bg-surface0/40"
+              class="flex items-center justify-between rounded-lg bg-secondary/20 p-3 transition-all duration-300 hover:-translate-y-1 hover:bg-secondary/40"
               in:fly={{
                 y: 10,
                 duration: 300,
@@ -182,7 +181,7 @@
             >
               <div class="flex items-center gap-3">
                 <div
-                  class="flex h-8 w-8 items-center justify-center rounded-md bg-base/70"
+                  class="flex h-8 w-8 items-center justify-center rounded-md bg-primary/70"
                 >
                   <span class="text-xs font-bold"
                     >{project.name.substring(0, 2).toUpperCase()}</span
@@ -192,7 +191,7 @@
                   <p class="max-w-[150px] truncate font-medium">
                     {project.name}
                   </p>
-                  <p class="text-text-muted text-xs">{project.text}</p>
+                  <p class="text-gray text-xs">{project.text}</p>
                 </div>
               </div>
               <div

@@ -1,25 +1,24 @@
 import { env } from "$env/dynamic/public";
 
 const themeColors = {
-    base: '#1e1e2e',
-    mantle: '#181825',
+    background: '#1e1e2e',
+    primary: '#181825',
     crust: '#11111b',
-    surface0: '#313244',
-    surface1: '#45475a',
+    secondary: '#313244',
+    accent: '#45475a',
     text: '#cdd6f4',
-    subtext0: '#a6adc8',
-    subtext1: '#bac2de',
-    lavender: '#b4befe',
+    border: '#a6adc8',
+    gray: '#bac2de',
+    purple: '#b4befe',
     blue: '#89b4fa',
-    sapphire: '#74c7ec',
+    cyan: '#74c7ec',
     green: '#a6e3a1',
     red: '#f38ba8',
     mauve: '#cba6f7',
     pink: '#f5c2e7',
-    peach: '#fab387',
+    orange: '#fab387',
     yellow: '#f9e2af',
     teal: '#94e2d5',
-    maroon: '#eba0ac',
 };
 
 

@@ -62,7 +62,7 @@
 </script>
 
 <section
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-green/20 md:col-span-7"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-green/20 md:col-span-7"
 >
   <h2 class="group relative mb-6 inline-block text-2xl font-bold text-text">
     Current Activities
@@ -75,7 +75,7 @@
     <div class="space-y-4">
       {#each regularActivities as activity, i}
         <div
-          class="bg-base-dark/50 transform rounded-lg p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-surface0/70 hover:shadow-md"
+          class="bg-background/50 transform rounded-lg p-6 backdrop-blur-xs transition-all duration-300 hover:-translate-y-1 hover:bg-secondary/70 hover:shadow-md"
           in:fly={{
             y: 20,
             duration: 400,
@@ -88,7 +88,7 @@
               <img
                 src={activity.assets.large_image}
                 alt={activity.name}
-                class="h-16 w-16 rounded-md object-cover shadow-sm transition-transform duration-300 hover:rotate-3 hover:scale-110"
+                class="h-16 w-16 rounded-md object-cover shadow-xs transition-transform duration-300 hover:rotate-3 hover:scale-110"
               />
             {/if}
             <div class="flex-1">
@@ -105,11 +105,11 @@
                           {getTimeUntil(activity.timestamps.end)}
                         </span>
                         <span
-                          class="absolute -top-8 right-0 whitespace-nowrap rounded-md bg-surface0/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
+                          class="absolute -top-8 right-0 whitespace-nowrap rounded-md bg-secondary/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
                         >
                           {formatDuration(
                             activity.timestamps.start,
-                            activity.timestamps.end,
+                            activity.timestamps.end
                           )}
                         </span>
                       {:else}
@@ -117,10 +117,10 @@
                           {getElapsedTime(activity.timestamps.start)}
                         </span>
                         <span
-                          class="absolute -top-8 right-0 whitespace-nowrap rounded-md bg-surface0/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
+                          class="absolute -top-8 right-0 whitespace-nowrap rounded-md bg-secondary/90 px-2 py-1 text-xs opacity-0 shadow-md transition-opacity duration-300 group-hover:opacity-100"
                         >
                           Started: {new Date(
-                            activity.timestamps.start,
+                            activity.timestamps.start
                           ).toLocaleTimeString()}
                         </span>
                       {/if}
@@ -132,12 +132,12 @@
               {#if activity.type === 2 && activity.timestamps?.start && activity.timestamps?.end}
                 {@const progress = getSongProgress(
                   activity.timestamps.start,
-                  activity.timestamps.end,
+                  activity.timestamps.end
                 )}
                 {#key currentTime}
                   <div class="mb-1.5 mt-2.5">
                     <div
-                      class="relative h-1.5 w-full overflow-hidden rounded-full bg-surface0/50"
+                      class="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary/50"
                     >
                       <div
                         class="h-full rounded-full bg-gradient-to-r from-green/70 to-green/90 transition-[width] duration-500 ease-out"
@@ -154,7 +154,7 @@
               {:else if activity.timestamps?.start && !activity.timestamps?.end}
                 <div class="mb-1.5 mt-2.5">
                   <div
-                    class="relative h-1.5 w-full overflow-hidden rounded-full bg-surface0/50"
+                    class="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary/50"
                   >
                     <div
                       class="relative h-full animate-progress-indeterminate rounded-full bg-gradient-to-r from-green/70 to-green/90"
@@ -164,10 +164,10 @@
               {/if}
 
               {#if activity.details}
-                <p class="text-text-muted mt-1">{activity.details}</p>
+                <p class="text-gray mt-1">{activity.details}</p>
               {/if}
               {#if activity.state}
-                <p class="text-text-muted mt-1 text-sm">
+                <p class="text-gray mt-1 text-sm">
                   {activity.state}
                 </p>
               {/if}
@@ -178,10 +178,10 @@
     </div>
   {:else}
     <div
-      class="rounded-lg bg-surface0/30 p-6 backdrop-blur-sm"
+      class="rounded-lg bg-secondary/30 p-6 backdrop-blur-xs"
       in:slide={{ duration: 400, delay: 300 }}
     >
-      <p class="text-text-muted text-center">Currently not doing anything</p>
+      <p class="text-gray text-center">Currently not doing anything</p>
     </div>
   {/if}
 </section>

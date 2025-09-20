@@ -1,3 +1,109 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss";
+
+@theme {
+  --color-background: #1e1e2e;
+  --color-primary: #181825;
+  --color-secondary: #313244;
+  --color-accent: #45475a;
+  --color-text: #cdd6f4;
+  --color-border: #a6adc8;
+  --color-blue: #89b4fa;
+  --color-mauve: #cba6f7;
+  --color-red: #f38ba8;
+  --color-green: #a6e3a1;
+  --color-gray: #bac2de;
+  --color-pink: #f5c2e7;
+  --color-yellow: #f9e2af;
+  --color-orange: #fab387;
+  --color-purple: #b4befe;
+  --color-teal: #94e2d5;
+  --color-cyan: #74c7ec;
+  --color-gold: #eba0ac;
+}
+
+@theme {
+  --animate-shimmer: shimmer 3s linear infinite;
+  --animate-slide-up: slideUp 0.6s ease-out forwards;
+  --animate-pulse: pulse 2s ease-in-out infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-spin: spin 1.5s linear infinite;
+  --animate-chart-animated: chartAnimation 1.5s ease-out forwards;
+  --animate-proficiency: fillWidth 1s ease-out forwards;
+  --animate-progress-indeterminate: progressIndeterminate 1.5s infinite
+    ease-in-out;
+
+  --transition-property-transform-opacity: transform, opacity;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes slideUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes chartAnimation {
+    0% {
+      stroke-dasharray: 0 1000;
+      opacity: 0;
+    }
+    100% {
+      stroke-dasharray: var(--final-dasharray);
+      opacity: 1;
+    }
+  }
+  @keyframes fillWidth {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: var(--proficiency);
+    }
+  }
+  @keyframes progressIndeterminate {
+    0% {
+      left: -100%;
+      width: 100%;
+    }
+    100% {
+      left: 100%;
+      width: 100%;
+    }
+  }
+}

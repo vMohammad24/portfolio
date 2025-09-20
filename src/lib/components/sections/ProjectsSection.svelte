@@ -12,7 +12,7 @@
 
 <section
   id="projects"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-teal/20 md:col-span-12"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-teal/20 md:col-span-12"
 >
   <h2 class="group relative mb-6 inline-block text-2xl font-bold text-text">
     My Projects
@@ -24,7 +24,7 @@
   <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
     {#each projects as project, i}
       <div
-        class="bg-base-dark/30 group relative h-full overflow-hidden rounded-lg p-6 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:bg-surface0/50 hover:shadow-md"
+        class="bg-background/30 group relative h-full overflow-hidden rounded-lg p-6 shadow-xs transition-all duration-500 hover:-translate-y-2 hover:bg-secondary/50 hover:shadow-md"
         in:fly={{
           y: 20,
           duration: 400,
@@ -45,7 +45,7 @@
               src={project.logo ??
                 "https://raw.githubusercontent.com/devicons/devicon/refs/tags/v2.16.0/icons/github/github-original.svg"}
               alt={project.name}
-              class="relative h-12 w-12 rounded-md bg-base/50 object-cover p-1 transition-transform duration-300 group-hover:rotate-6"
+              class="relative h-12 w-12 rounded-md bg-primary/50 object-cover p-1 transition-transform duration-300 group-hover:rotate-6"
             />
           </div>
           <a
@@ -61,20 +61,20 @@
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            class="ml-auto rounded-full bg-surface0/50 p-2 opacity-0 transition-opacity duration-300 hover:bg-teal/70 hover:text-crust group-hover:opacity-100"
+            class="ml-auto rounded-full bg-secondary/50 p-2 opacity-0 transition-opacity duration-300 hover:bg-teal/70 hover:group-hover:opacity-100"
             aria-label="View project"
           >
             <ExternalLink class="h-5 w-5" />
           </a>
         </div>
 
-        <p class="text-text-muted mb-4 min-h-[60px]">
+        <p class="text-gray mb-4 min-h-[60px]">
           {project.description}
         </p>
 
         <div class="mb-4 flex flex-wrap gap-2">
           {#each project.techs || [] as tech}
-            <span class="rounded-full bg-mantle/50 px-2 py-1 text-xs"
+            <span class="rounded-full bg-primary/50 px-2 py-1 text-xs"
               >{tech}</span
             >
           {/each}
@@ -82,10 +82,10 @@
 
         {#if project.wakatimeStats}
           <div
-            class="mt-auto flex items-center gap-2 rounded-lg bg-surface0/20 p-3 transition-colors duration-300 group-hover:bg-surface0/40"
+            class="mt-auto flex items-center gap-2 rounded-lg bg-secondary/20 p-3 transition-colors duration-300 group-hover:bg-secondary/40"
           >
             <div class="h-3 w-3 animate-pulse rounded-full bg-teal"></div>
-            <span class="text-text-muted text-sm">
+            <span class="text-gray text-sm">
               Coding time: <span class="font-medium text-teal"
                 >{project.wakatimeStats.text}</span
               >
@@ -104,7 +104,7 @@
       href="https://github.com/vMohammad24"
       target="_blank"
       rel="noopener noreferrer"
-      class="inline-flex items-center gap-2 rounded-lg bg-surface0/40 px-6 py-3 transition-all duration-300 hover:-translate-y-1 hover:bg-teal/70 hover:text-crust focus:outline-none focus:ring-2 focus:ring-teal/50"
+      class="inline-flex items-center gap-2 rounded-lg bg-secondary/40 px-6 py-3 transition-all duration-300 hover:-translate-y-1 hover:bg-teal/70 hover:focus:outline-none focus:ring-2 focus:ring-teal/50"
     >
       <span>More Projects on GitHub</span>
       <ArrowRight class="h-5 w-5" />

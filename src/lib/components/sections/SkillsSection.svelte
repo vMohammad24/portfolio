@@ -11,7 +11,7 @@
 <section
   bind:this={sectionElement}
   id="skills"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-pink/20 md:col-span-4"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-pink/20 md:col-span-4"
   use:viewport.intersection
   class:animate-slide-up={$viewport.get(sectionElement)}
 >
@@ -27,8 +27,8 @@
         href={skill.link}
         target="_blank"
         rel="noopener noreferrer"
-        class="bg-base-dark/50 group flex flex-col items-center gap-2 rounded-lg p-4
-								transition-all duration-300 hover:scale-105 hover:bg-mantle hover:shadow-lg
+        class="bg-background/50 group flex flex-col items-center gap-2 rounded-lg p-4
+								transition-all duration-300 hover:scale-105 hover:bg-primary hover:shadow-lg
                                 focus:outline-none focus:ring-2 focus:ring-pink/50"
         in:fly={{
           y: 15,
@@ -53,11 +53,12 @@
     {/each}
   </div>
 
-  <div class="mt-8 border-t border-surface0/30 pt-4">
+  <div class="mt-8 border-t border-secondary/30 pt-4">
     <h3 class="mb-3 text-lg font-medium text-pink/80">Currently Learning</h3>
     <div class="flex flex-wrap gap-2">
       {#each ["Rust"] as skill, i}
-        <span class="rounded-full bg-mantle/50 px-2 py-1 text-xs">{skill}</span>
+        <span class="rounded-full bg-primary/50 px-2 py-1 text-xs">{skill}</span
+        >
       {/each}
     </div>
   </div>

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Background from "$lib/components/Background.svelte";
   import AboutSection from "$lib/components/sections/AboutSection.svelte";
   import ActivitiesSection from "$lib/components/sections/ActivitiesSection.svelte";
   import FooterSection from "$lib/components/sections/FooterSection.svelte";
@@ -121,14 +120,9 @@
   <meta property="twitter:image:src" content={pain} />
 </svelte:head>
 
-<main
-  class="relative min-h-screen overflow-hidden bg-gradient-to-br from-base to-crust p-4 text-text md:p-8"
->
-  <div class="fixed inset-0 z-0 opacity-20">
-    <Background particleCount={40} />
-  </div>
+<main class="relative min-h-screen overflow-hidden p-4 text-text md:p-8">
   <button
-    class="fixed bottom-6 right-6 z-40 transform rounded-full bg-lavender/80 p-3 text-crust shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-lavender"
+    class="fixed bottom-6 right-6 z-40 transform rounded-full bg-mauve/80 p-3 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-mauve"
     style="opacity: {showBackToTop ? '1' : '0'}; pointer-events: {showBackToTop
       ? 'auto'
       : 'none'}; transform: scale({showBackToTop ? '1' : '0.8'});"

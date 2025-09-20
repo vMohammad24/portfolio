@@ -1,101 +1,109 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount } from "svelte";
 
-	export let particleCount = 30;
-	export let colors = ['#89B4FA', '#F5C2E7', '#94E2D5', '#89DCEB'];
-	export let speed = 0.5;
-	export let size = { min: 2, max: 5 };
-	export let opacity = { min: 0.1, max: 0.5 };
+  interface Props {
+    particleCount?: number;
+    colors?: string[];
+    speed?: number;
+    size?: { min: number; max: number };
+    opacity?: { min: number; max: number };
+    className?: string;
+  }
 
-	let canvas: HTMLCanvasElement;
-	let ctx: CanvasRenderingContext2D;
-	let frame: number;
-	let width: number;
-	let height: number;
+  let {
+    particleCount = 10,
+    colors = ["#89B4FA", "#F5C2E7", "#94E2D5", "#89DCEB"],
+    speed = 0.5,
+    size = { min: 2, max: 5 },
+    opacity = { min: 0.1, max: 0.5 },
+    className = "",
+  }: Props = $props();
 
-	type Particle = {
-		x: number;
-		y: number;
-		radius: number;
-		color: string;
-		vX: number;
-		vY: number;
-		opacity: number;
-	};
+  let canvas = $state<HTMLCanvasElement>();
+  let ctx = $state<CanvasRenderingContext2D>();
+  let frame = $state<number>();
+  let width = $state<number>();
+  let height = $state<number>();
 
-	let particles: Particle[] = [];
+  type Particle = {
+    x: number;
+    y: number;
+    radius: number;
+    color: string;
+    vX: number;
+    vY: number;
+    opacity: number;
+  };
 
-	function createParticles() {
-		particles = [];
-		for (let i = 0; i < particleCount; i++) {
-			particles.push({
-				x: Math.random() * width,
-				y: Math.random() * height,
-				radius: Math.random() * (size.max - size.min) + size.min,
-				color: colors[Math.floor(Math.random() * colors.length)],
-				vX: (Math.random() - 0.5) * speed,
-				vY: (Math.random() - 0.5) * speed,
-				opacity: Math.random() * (opacity.max - opacity.min) + opacity.min
-			});
-		}
-	}
+  let particles: Particle[] = [];
 
-	function draw() {
-		if (!ctx) return;
+  function createParticles() {
+    if (!width || !height) return;
 
-		ctx.clearRect(0, 0, width, height);
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * (size.max - size.min) + size.min,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vX: (Math.random() - 0.5) * speed,
+        vY: (Math.random() - 0.5) * speed,
+        opacity: Math.random() * (opacity.max - opacity.min) + opacity.min,
+      });
+    }
+  }
 
-		particles.forEach((particle) => {
-			particle.x += particle.vX;
-			particle.y += particle.vY;
+  function draw() {
+    if (!ctx || !width || !height) return;
 
-			// pain
-			if (particle.x < 0) particle.x = width;
-			if (particle.x > width) particle.x = 0;
-			if (particle.y < 0) particle.y = height;
-			if (particle.y > height) particle.y = 0;
+    ctx.clearRect(0, 0, width, height);
 
-			// draw
-			ctx.beginPath();
-			ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-			ctx.fillStyle = particle.color;
-			ctx.globalAlpha = particle.opacity;
-			ctx.fill();
-		});
+    particles.forEach((particle) => {
+      particle.x += particle.vX;
+      particle.y += particle.vY;
+      if (particle.x < 0) particle.x = width!;
+      if (particle.x > width!) particle.x = 0;
+      if (particle.y < 0) particle.y = height!;
+      if (particle.y > height!) particle.y = 0;
+      ctx!.beginPath();
+      ctx!.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+      ctx!.fillStyle = particle.color;
+      ctx!.globalAlpha = particle.opacity;
+      ctx!.fill();
+    });
 
-		frame = requestAnimationFrame(draw);
-	}
+    frame = requestAnimationFrame(draw);
+  }
 
-	function handleResize() {
-		if (!canvas) return;
-		width = canvas.width = canvas.offsetWidth;
-		height = canvas.height = canvas.offsetHeight;
-		createParticles();
-	}
+  function handleResize() {
+    if (!canvas) return;
+    width = canvas.width = canvas.offsetWidth;
+    height = canvas.height = canvas.offsetHeight;
+    createParticles();
+  }
 
-	onMount(() => {
-		if (!canvas) return;
+  onMount(() => {
+    if (!canvas) return;
 
-		ctx = canvas.getContext('2d')!;
-		handleResize();
-		browser && window.addEventListener('resize', handleResize);
-		frame = requestAnimationFrame(draw);
+    ctx = canvas.getContext("2d")!;
+    handleResize();
+    frame = requestAnimationFrame(draw);
 
-		return () => {
-			cancelAnimationFrame(frame);
-			browser && window.removeEventListener('resize', handleResize);
-		};
-	});
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+    };
+  });
 
-	onDestroy(() => {
-		if (frame) cancelAnimationFrame(frame);
-		browser && window.removeEventListener('resize', handleResize);
-	});
+  onDestroy(() => {
+    if (frame) cancelAnimationFrame(frame);
+  });
 </script>
 
 <canvas
-	bind:this={canvas}
-	class="absolute inset-0 h-full w-full opacity-40"
-	style="pointer-events: none;"
+  bind:this={canvas}
+  class="fixed inset-0 h-full w-full opacity-80 {className}"
+  style="pointer-events: none;"
 ></canvas>
+
+<svelte:window onresize={handleResize} />

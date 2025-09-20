@@ -11,7 +11,7 @@
 <section
   bind:this={sectionElement}
   id="socials"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-mauve/20 md:col-span-12"
+  class="transform rounded-xl bg-gradient-to-br from-primary/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-mauve/20 md:col-span-12"
   use:viewport.intersection
   class:animate-slide-up={$viewport.get(sectionElement)}
 >

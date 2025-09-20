@@ -2,13 +2,23 @@ FROM oven/bun:debian AS base
 WORKDIR /usr/src/app
 
 RUN apt-get update && \
-    apt-get install -y fonts-noto git fontconfig && \
+    apt-get install -y fonts-noto git fontconfig wget unzip && \
     git clone https://github.com/mrbvrz/segoe-ui-linux && \
     cd segoe-ui-linux && \
     chmod +x install.sh && \
     ./install.sh && \
     cd .. && \
     rm -rf segoe-ui-linux && \
+    mkdir -p /usr/share/fonts/truetype/system-ui && \
+    wget -O /tmp/inter.zip "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip" && \
+    unzip /tmp/inter.zip -d /tmp/inter && \
+    cp /tmp/inter/Inter\ Desktop/*.ttf /usr/share/fonts/truetype/system-ui/ && \
+    wget -O /tmp/roboto.zip "https://fonts.google.com/download?family=Roboto" && \
+    unzip /tmp/roboto.zip -d /tmp/roboto && \
+    cp /tmp/roboto/*.ttf /usr/share/fonts/truetype/system-ui/ && \
+    wget -O /tmp/opensans.zip "https://fonts.google.com/download?family=Open%20Sans" && \
+    unzip /tmp/opensans.zip -d /tmp/opensans && \
+    cp /tmp/opensans/*.ttf /usr/share/fonts/truetype/system-ui/ && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     rm -rf /tmp/* /var/tmp/* && \

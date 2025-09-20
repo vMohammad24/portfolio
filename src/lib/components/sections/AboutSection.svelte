@@ -10,7 +10,7 @@
 <section
   bind:this={sectionElement}
   id="about"
-  class="transform rounded-xl bg-gradient-to-br from-base/80 to-surface0/40 p-8 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:shadow-blue/20 md:col-span-5"
+  class="transform rounded-xl bg-gradient-to-br from-background/80 to-secondary/40 p-8 shadow-2xl backdrop-blur-xs transition-all duration-500 hover:shadow-blue/20 md:col-span-5"
   use:viewport.intersection
   class:animate-slide-up={$viewport.get(sectionElement)}
 >
@@ -22,7 +22,7 @@
   </h2>
   <div class="space-y-4">
     <p
-      class="text-text-muted leading-relaxed"
+      class="text-gray leading-relaxed"
       in:fly={{ y: 10, duration: 500, delay: 300, easing: backOut }}
     >
       Born on August 6th, 2009, in Jordan. I'm a student and full-stack
