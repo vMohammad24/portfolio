@@ -244,7 +244,10 @@ export const GET: RequestHandler = async ({ request }) => {
         </svg>`;
 
         const buf = new Resvg(svgContent, {
-            imageRendering: 1,
+            fitTo: {
+                mode: 'height',
+                value: 1440
+            },
         }).render().asPng();
 
         cachedImageBuffer = buf;
