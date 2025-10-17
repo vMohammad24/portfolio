@@ -108,7 +108,7 @@
     };
   });
 
-  const pain = `https://vmohammad.dev/avatar?${encodeURIComponent(
+  const pain = `https://vmohammad.dev/embed?${encodeURIComponent(
     Array.from(crypto.getRandomValues(new Uint8Array(20)))
       .map((byte) => String.fromCharCode(33 + (byte % 94)))
       .join("")

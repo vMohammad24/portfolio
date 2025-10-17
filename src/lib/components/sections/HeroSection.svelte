@@ -68,11 +68,7 @@
       {/if}
       <img
         class="z-5 h-32 w-32 rounded-full border-2 border-secondary object-cover shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:border-purple"
-        src={$lanyardStore?.discord_user
-          ? `https://cdn.discordapp.com/avatars/${
-              $lanyardStore.discord_user.id
-            }/${$lanyardStore.discord_user.avatar}.webp?size=1024`
-          : "https://cdn.discordapp.com/embed/avatars/0.png"}
+        src="/avatar"
         alt="Avatar"
         loading="eager"
       />
