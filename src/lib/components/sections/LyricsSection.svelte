@@ -176,7 +176,7 @@
       if (!response.ok) return null;
 
       const data = await response.json();
-      return data?.enhancedLyrics ? data : null;
+      return data?.lines ? data : null;
     } catch (error) {
       console.error("Failed to fetch lyrics:", error);
       return null;
@@ -207,13 +207,13 @@
   }
 
   function updateLyricsSync() {
-    if (!songStartTime || !currentLyricsData?.enhancedLyrics) {
+    if (!songStartTime || !currentLyricsData?.lines) {
       lyricsSync.currentLineIndex = -1;
       lyricsSync.currentWordIndex = -1;
       return;
     }
 
-    const lyrics = currentLyricsData.enhancedLyrics;
+    const lyrics = currentLyricsData.lines;
     let activeLineIndex = -1;
 
     for (let i = 0; i < lyrics.length; i++) {
@@ -251,11 +251,7 @@
   function scrollToCurrentLyric() {
     const { container, currentElement } = lyricsSync;
 
-    if (
-      !container ||
-      !currentElement ||
-      !currentLyricsData?.enhancedLyrics?.length
-    ) {
+    if (!container || !currentElement || !currentLyricsData?.lines?.length) {
       return;
     }
 
@@ -497,13 +493,13 @@
             <span class="text-gray">Loading lyrics...</span>
           </div>
         </div>
-      {:else if currentLyricsData?.enhancedLyrics?.length}
+      {:else if currentLyricsData?.lines?.length}
         <div
           class="flex-1 overflow-y-auto p-4 scrollbar-none max-h-112 rounded-xl bg-secondary/30 backdrop-blur-xs border border-secondary/20 shadow-inner scroll-smooth lyrics-container"
           bind:this={lyricsSync.container}
         >
           <div class="flex flex-col gap-6 pb-8">
-            {#each currentLyricsData.enhancedLyrics as line, i}
+            {#each currentLyricsData.lines as line, i}
               {#if i === lyricsSync.currentLineIndex}
                 <div
                   class="text-2xl leading-relaxed min-h-[60px] p-5 rounded-xl shadow-lg transform transition-all duration-300"

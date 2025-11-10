@@ -189,7 +189,7 @@ export interface LanyardResponse {
 // LYRICS API
 
 export interface EnhancedLyricsResponse {
-    enhancedLyrics: EnhancedLyric[];
+    lines: EnhancedLyric[];
 }
 
 
