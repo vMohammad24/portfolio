@@ -169,14 +169,29 @@
     length?: number
   ): Promise<EnhancedLyricsResponse | null> {
     const lengthParam = length ? `&length=${Math.round(length)}` : "";
-    const apiUrl = `https://api.vmohammad.dev/lyrics?track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}${lengthParam}`;
+    const apiUrl = `https://api.vmohammad.dev/lyrics?track=${encodeURIComponent(song)}&artist=${encodeURIComponent(artist)}${lengthParam}&minimal=true`;
 
     try {
       const response = await fetch(apiUrl);
       if (!response.ok) return null;
 
-      const data = await response.json();
-      return data?.lines ? data : null;
+      const res = await response.json();
+      if (Array.isArray(res?.lines)) {
+        return res.lines;
+      } else if (Array.isArray(res)) {
+        return {
+          lines: res.map((lyric: any) => ({
+            time: lyric.t,
+            text: lyric.l,
+            words: lyric.w.map((word: any) => ({
+              time: word.t,
+              endTime: word.e,
+              word: word.w,
+            })),
+          })),
+        };
+      }
+      return null;
     } catch (error) {
       console.error("Failed to fetch lyrics:", error);
       return null;
@@ -510,28 +525,17 @@
                 >
                   {#if line.words && line.words.length > 0}
                     {#each line.words as word, wordIndex}
-                      {#if word.isParenthetical}
-                        <span
-                          class="inline-block mr-1 opacity-70 text-gray font-light italic transition-all duration-300 ease-out hover:text-blue/80 cursor-pointer {wordIndex ===
-                          lyricsSync.currentWordIndex
-                            ? 'text-blue scale-105'
-                            : 'scale-100'}"
-                        >
-                          {word.word}
-                        </span>
-                      {:else}
-                        <span
-                          class="inline-block mr-1 transition-all duration-300 ease-out hover:text-blue cursor-pointer
+                      <span
+                        class="inline-block mr-1 transition-all duration-300 ease-out hover:text-blue cursor-pointer
                             {wordIndex <= lyricsSync.currentWordIndex
-                            ? 'text-blue'
-                            : ''}
+                          ? 'text-blue'
+                          : ''}
                             {wordIndex === lyricsSync.currentWordIndex
-                            ? 'font-semibold scale-105'
-                            : 'font-normal scale-100'}"
-                        >
-                          {word.word}
-                        </span>
-                      {/if}
+                          ? 'font-semibold scale-105'
+                          : 'font-normal scale-100'}"
+                      >
+                        {word.word}
+                      </span>
                     {/each}
                   {:else}
                     <span class="text-blue font-medium">

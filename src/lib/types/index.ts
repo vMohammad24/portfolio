@@ -200,13 +200,7 @@ interface EnhancedLyric {
         time: number;
         word: string;
         endTime: number;
-        isParenthetical: boolean;
-        confidence: null;
-        syllableCount: number;
-        characters: Character[];
     }[];
-    confidence: number | null;
-    characters: Character[];
 }
 
 interface Character {
